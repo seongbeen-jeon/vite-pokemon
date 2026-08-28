@@ -1,39 +1,74 @@
 import {useParams} from "react-router-dom";
+import {useState, useEffect} from "react";
+
 import SmallCard from "../components/smallCard";
+import {getCards, getRelatedCards} from "../services/cardService.js";
+
+const IMG_BASE_URL = import.meta.env.VITE_IMG_BASE_URL;
 
 function CardDetail() {
     const {cardid} = useParams();
     /*
     카드 정보 가져오기
     */
-    
+    const [card, setCard] = useState({});
+    const [relatedCards, setRelatedCards] = useState([]);
+
+    useEffect(()=>{
+        async function getCardDetail(){
+            try{
+                const data = await getCards({id:cardid});
+                //image_path 가공
+                (data[0].image_path = data[0].image_path.startsWith("SV") ? `SV/${data[0].image_path.split("_")[0]}/${data[0].image_path}.webp` 
+                        : data[0].image_path.startsWith("S") ? `S/${data[0].image_path.split("_")[0]}/${data[0].image_path}.webp`
+                        : data[0].image_path.startsWith("M") ? `MEGA/${data[0].image_path.split("_")[0]}/${data[0].image_path}.webp`
+                        : data[0].image_path);
+
+                const relatedCardsdata = await getRelatedCards(data[0], 6);
+                const newPathrelatedCards = relatedCardsdata.map((card)=>({
+                    ...card,
+                    image_path : card.image_path.startsWith("SV") ? `SV/${card.image_path.split("_")[0]}/${card.image_path}.webp` 
+                        : card.image_path.startsWith("S") ? `S/${card.image_path.split("_")[0]}/${card.image_path}.webp`
+                        : card.image_path.startsWith("M") ? `MEGA/${card.image_path.split("_")[0]}/${card.image_path}.webp`
+                        : card.image_path
+                }));
+
+                setCard(data[0]);
+                setRelatedCards(newPathrelatedCards);
+
+                
+
+            }catch(error){
+                console.error("fetch Card error : ",error);
+            }
+        }
+        getCardDetail();
+    },[cardid]);
+
+
     return(
         <>
         <div className="container ">
             <div className="card-detail flex">
                 <div className="card-image w-[360px]">
-                    <img src={`../../assets/M2a/${cardid}`} alt={cardid} className="w-full"/>
+                    <img src={`${IMG_BASE_URL}/${card?.image_path}`} alt={cardid} className="w-full"/>
                 </div>
                 <div className="card-info w-1/2 p-8">
-                    <h1 className="text-2xl font-bold mb-4">{cardid}</h1>
-                    <p className="mb-2">카드 설명</p>
-                    <p className="mb-2">카드 속성</p>
-                    <p className="mb-2">카드 능력치</p>
+                    <h1 className="text-2xl font-bold mb-4">{card.title}</h1>
+                    <p className="mb-2">도감번호 : {card.dex_no}</p>
+                    <p className="mb-2">일러스트레이터 : {card.illustrator}</p>
+                    <p className="mb-2">팩 : {card.pack_name}</p>
+                    <p className="mb-2">일본판 이름 : {card.title}</p>
+                    <p className="mb-2">영판 이름  : {card.title}</p>
                 </div>
             </div>
+            
             <div className="extra-info m-5">
                 <div>연관 카드</div>
                 <div className="cardList flex m-4 gap-5">
-                    <SmallCard />
-                    <SmallCard />
-                    <SmallCard />
-                </div>
-
-                <div>같은 박스 다른 카드</div>
-                <div className="cardList flex m-4 gap-5">
-                    <SmallCard />
-                    <SmallCard />
-                    <SmallCard />
+                    {relatedCards.map((card) => (
+                        <SmallCard key={card.id} id={card.id} img_path={card.image_path}/>
+                    ))}
                 </div>
             </div>
         </div>

@@ -4,8 +4,10 @@ import {Routes,Route} from 'react-router-dom';
 import Layout from './Layout.jsx';
 import Album from './pages/Album.jsx';
 import Sets from './pages/Sets.jsx';
-import CardListPage from './pages/CardListPage.jsx';
+import BoxDetail from './pages/BoxDetail.jsx';
 import CardDetail from './pages/CardDetail.jsx';
+import SignIn from './pages/SignIn.jsx';
+import SignUp from './pages/SignUp.jsx';
 
 function App() {
   return (
@@ -14,8 +16,10 @@ function App() {
         <Route path="/" element={<Home/>}/>
         <Route path="/album" element={<Album/>}/>
         <Route path="/sets" element={<Sets/>}/>
-        <Route path="/sets/:boxid" element={<CardListPage/>}/>
+        <Route path="/sets/:set_Code" element={<BoxDetail/>}/>
         <Route path="/cards/:cardid" element={<CardDetail/>}/>
+        <Route path="/signin" element={<SignIn/>}></Route>
+        <Route path='/signup' element={<SignUp/>}></Route>
       </Route>
     </Routes>
   )

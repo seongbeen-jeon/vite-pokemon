@@ -1,11 +1,16 @@
 import { Link } from "react-router-dom";
+const IMG_BASE_URL = import.meta.env.VITE_IMG_BASE_URL;
 
-function SmallCard(){
+
+function SmallCard({id, img_path}) {
+    
+    console.log("id :", id,'img_path : ', img_path);
+
     return(
     <> 
         <div className="w-[100px] rounded-3xl shadow-sm">
-            <Link to={`/cards/M2_110.png`}>
-                <img src="../../assets/M2_110.png" alt="pokecard"/>
+            <Link to={`/cards/${id}`}>
+                <img src={`${IMG_BASE_URL}/${img_path}`} alt={id} className="w-full"/>
             </Link>
         </div>
     </>

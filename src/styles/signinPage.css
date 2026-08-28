@@ -1,0 +1,142 @@
+.form-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: #FFFFFF;
+  width: 100%;
+  max-width: 420px;
+  padding: 40px 32px;
+  border-radius: 20px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  text-align: center;
+}
+
+h2 {
+  font-size: 24px;
+  font-weight: 700;
+  color: #1A1D1F;
+  margin-bottom: 32px;
+}
+
+.input-group {
+  text-align: left;
+  margin-bottom: 20px;
+}
+
+.input-group label {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  color: #6F767E;
+  margin-bottom: 8px;
+}
+
+.label-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.forgot-link {
+  font-size: 14px;
+  font-weight: 600;
+  color: #2A85FF;
+  text-decoration: none;
+}
+
+.forgot-link:hover {
+  text-decoration: underline;
+}
+
+input[type="email"],
+.password-wrapper input {
+  width: 100%;
+  height: 48px;
+  padding: 0 16px;
+  border: 1px solid #E6E8EC;
+  border-radius: 12px;
+  font-size: 15px;
+  color: #1A1D1F;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+input:focus {
+  border-color: #2A85FF;
+}
+
+.password-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.password-wrapper input {
+  padding-right: 48px;
+}
+
+.eye-btn {
+  position: absolute;
+  right: 12px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #9A9FA5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn {
+  width: 100%;
+  height: 48px;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: background-color 0.2s, opacity 0.2s;
+}
+
+.btn-primary {
+  background-color: #1D72E8;
+  color: #FFFFFF;
+  margin-top: 8px;
+  margin-bottom: 12px;
+}
+
+.btn-primary:hover {
+  background-color: #1557B0;
+}
+
+.btn-google {
+  background-color: #E8F1FD;
+  color: #1D72E8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.btn-google:hover {
+  background-color: #DCE8FC;
+}
+
+.footer-text {
+  margin-top: 32px;
+  font-size: 14px;
+  color: #9A9FA5;
+  font-weight: 500;
+}
+
+.footer-text a {
+  color: #2A85FF;
+  font-weight: 600;
+  text-decoration: none;
+  margin-left: 4px;
+}
+
+.footer-text a:hover {
+  text-decoration: underline;
+}
