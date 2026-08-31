@@ -17,7 +17,7 @@ function App() {
         <Route path="/album" element={<Album/>}/>
         <Route path="/sets" element={<Sets/>}/>
         <Route path="/sets/:set_Code" element={<BoxDetail/>}/>
-        <Route path="/cards/:cardid" element={<CardDetail/>}/>
+        <Route path="/cards/:cardId" element={<CardDetail/>}/>
         <Route path="/signin" element={<SignIn/>}></Route>
         <Route path='/signup' element={<SignUp/>}></Route>
       </Route>

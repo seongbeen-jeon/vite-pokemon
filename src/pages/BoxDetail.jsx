@@ -4,7 +4,7 @@ import {getCards} from "../services/cardService.js";
 import {useState, useEffect} from 'react';
 
 const IMG_BASE_URL = import.meta.env.VITE_IMG_BASE_URL;
-const limit = 10;
+const limit = 20;
 
 
 function BoxDetail() {

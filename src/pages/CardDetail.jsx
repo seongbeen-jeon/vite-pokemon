@@ -3,11 +3,12 @@ import {useState, useEffect} from "react";
 
 import SmallCard from "../components/smallCard";
 import {getCards, getRelatedCards} from "../services/cardService.js";
+import { insertCard } from "../services/albumService.js";
 
 const IMG_BASE_URL = import.meta.env.VITE_IMG_BASE_URL;
 
 function CardDetail() {
-    const {cardid} = useParams();
+    const {cardId} = useParams();
     /*
     카드 정보 가져오기
     */
@@ -17,7 +18,7 @@ function CardDetail() {
     useEffect(()=>{
         async function getCardDetail(){
             try{
-                const data = await getCards({id:cardid});
+                const data = await getCards({id:cardId});
                 //image_path 가공
                 (data[0].image_path = data[0].image_path.startsWith("SV") ? `SV/${data[0].image_path.split("_")[0]}/${data[0].image_path}.webp` 
                         : data[0].image_path.startsWith("S") ? `S/${data[0].image_path.split("_")[0]}/${data[0].image_path}.webp`
@@ -25,6 +26,8 @@ function CardDetail() {
                         : data[0].image_path);
 
                 const relatedCardsdata = await getRelatedCards(data[0], 6);
+
+                //image_path 가공
                 const newPathrelatedCards = relatedCardsdata.map((card)=>({
                     ...card,
                     image_path : card.image_path.startsWith("SV") ? `SV/${card.image_path.split("_")[0]}/${card.image_path}.webp` 
@@ -43,7 +46,7 @@ function CardDetail() {
             }
         }
         getCardDetail();
-    },[cardid]);
+    },[cardId]);
 
 
     return(
@@ -51,7 +54,7 @@ function CardDetail() {
         <div className="container ">
             <div className="card-detail flex">
                 <div className="card-image w-[360px]">
-                    <img src={`${IMG_BASE_URL}/${card?.image_path}`} alt={cardid} className="w-full"/>
+                    <img src={`${IMG_BASE_URL}/${card?.image_path}`} alt={cardId} className="w-full"/>
                 </div>
                 <div className="card-info w-1/2 p-8">
                     <h1 className="text-2xl font-bold mb-4">{card.title}</h1>
@@ -60,7 +63,11 @@ function CardDetail() {
                     <p className="mb-2">팩 : {card.pack_name}</p>
                     <p className="mb-2">일본판 이름 : {card.title}</p>
                     <p className="mb-2">영판 이름  : {card.title}</p>
+                    <div id="insertBtn" className="w-full">
+                        <button className="p-3 bg-white rounded-xl shadow-sm" onClick={()=>{insertCard({cardId})}}>앨범에 추가하기</button>
+                    </div>
                 </div>
+                
             </div>
             
             <div className="extra-info m-5">

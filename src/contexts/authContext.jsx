@@ -3,13 +3,11 @@ import { supabase } from '../lib/supabase';
 
 const AuthContext = createContext(null);
 
-console.log("AuthContext 파일 로드됨");
 
 export function AuthProvider({children}){
     const [user,setUser] = useState(null);
     const [loading, setLoading] = useState(true);
 
-    console.log("AuthProvider 실행");
 
     async function loadUser(session){
         if(!session?.user){
@@ -31,7 +29,6 @@ export function AuthProvider({children}){
             userinfo : userinfo,
         };
 
-        console.log("최종 userdata:", userdata);
 
         setUser(userdata);
     }
@@ -58,7 +55,6 @@ export function AuthProvider({children}){
         return ()=>{subscription.unsubscribe();}
     },[]);
 
-    console.log("provider 가 제공하는 user : ", {user})
     return (
         <AuthContext.Provider value={{user,loading}}>
             {children}
@@ -67,6 +63,5 @@ export function AuthProvider({children}){
 }
 
 export function useAuth(){
-    console.log("useAuth start");
     return useContext(AuthContext);
 }

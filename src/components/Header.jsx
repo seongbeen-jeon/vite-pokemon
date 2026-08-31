@@ -1,12 +1,11 @@
 import {Link} from 'react-router-dom';
-import logo from '../../assets/pokedex_logo.png';
+import logo from '../../asset/pokedex_logo.png';
 import {useAuth} from '../contexts/authContext';
 import {signOut} from '../services/authService';
 
 function Header(){
     const {user,loading} = useAuth();
 
-    console.log('Header에서 받는 user',user);
     if(loading){
         return(
             <div>

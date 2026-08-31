@@ -1,15 +1,19 @@
 import {supabase} from "../lib/supabase.js";
 import {normalizeKeyword} from "../util/filter.js";
 
-export async function getCards({id,set_code, dexNo, keyword, limit}={}) {
+export async function getCards({id,idList,set_code, dexNo, keyword, limit}={}) {
     let query = supabase.from("cards").select("*");
 
     if(id){
         query = query.eq("id", id);
     }
+    
+    if(idList?.length > 0){
+        query = query.in('id',idList);
+    }
 
     if(set_code){
-        query = query.eq("set_code", set_code);
+        query = query.eq("set_code", set_code).order('card_no', { ascending: false });;
     }
 
     if(dexNo){
