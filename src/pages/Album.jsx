@@ -1,39 +1,62 @@
 import {useState, useEffect} from 'react';
-import {Link} from 'react-router-dom';
+import {Link, Navigate, useNavigate} from 'react-router-dom';
 
 import MediumCard from '../components/MediumCard';
 import { getMyAlbum } from '../services/albumService';
 import { getCards } from '../services/cardService';
+import {useAuth} from '../contexts/authContext';
+
 
 const IMG_BASE_URL = import.meta.env.VITE_IMG_BASE_URL;
 
 function Album(){
     const [cards, setCards] = useState([]);
     const [loading, setLoading] = useState(true);
+    const navigate = useNavigate(); 
+    const {user, loading : userloading} = useAuth();
 
-    
     useEffect(()=>{
+
+        if(userloading) return;
+
+        if(!user){
+            alert("로그인이 필요합니다.");
+            navigate('/signin',{replace : true});
+            return ;
+        }
+
         async function getAlbum(){
-            const getMyAlbumData = await getMyAlbum();
-            const idList = getMyAlbumData.map((card)=>card.card_id);
+            try{
+                const getMyAlbumData = await getMyAlbum();
+                const idList = getMyAlbumData.map((card)=>card.card_id);
         
-            const myCards = await getCards({idList});
+                if(idList.length === 0){ //앨범에 카드가 하나도 없는 사람은 카드데이터 호출 X
+                    setCards([]);
+                    setLoading(false);
+                    return ;
+                }
 
-            //imgPath 가공
-            const newPathData = myCards.map((card)=>({
-                ...card,
-                image_path : card.image_path.startsWith("SV") ? `SV/${card.image_path.split("_")[0]}/${card.image_path}.webp` 
-                    : card.image_path.startsWith("S") ? `S/${card.image_path.split("_")[0]}/${card.image_path}.webp`
-                    : card.image_path.startsWith("M") ? `MEGA/${card.image_path.split("_")[0]}/${card.image_path}.webp`
-                    : card.image_path
-                }));
+                const myCards = await getCards({idList});
 
-            setCards(newPathData);
-            setLoading(false);
+                //imgPath 가공
+                const newPathData = myCards.map((card)=>({
+                    ...card,
+                    image_path : card.image_path.startsWith("SV") ? `SV/${card.image_path.split("_")[0]}/${card.image_path}.webp` 
+                        : card.image_path.startsWith("S") ? `S/${card.image_path.split("_")[0]}/${card.image_path}.webp`
+                        : card.image_path.startsWith("M") ? `MEGA/${card.image_path.split("_")[0]}/${card.image_path}.webp`
+                        : card.image_path
+                    }));
+
+                setCards(newPathData);
+            }catch(error){
+                console.error(error);
+            }finally{
+                setLoading(false);
+            }
         }
 
         getAlbum();
-    },[]);
+    },[user,userloading, navigate]);
 
     if(loading){
         return(

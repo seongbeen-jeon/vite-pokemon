@@ -4,6 +4,8 @@ import {getCards} from "../services/cardService.js";
 import {useState, useEffect} from 'react';
 
 const IMG_BASE_URL = import.meta.env.VITE_IMG_BASE_URL;
+
+//box 상세 페이지에서 카드가 몇 장 보일지 제한 / 테스트용 20장
 const limit = 20;
 
 
