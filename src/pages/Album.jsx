@@ -5,7 +5,7 @@ import MediumCard from '../components/MediumCard';
 import { getMyAlbum } from '../services/albumService';
 import { getCards } from '../services/cardService';
 import {useAuth} from '../contexts/authContext';
-
+import Card from '../components/Card';
 
 const IMG_BASE_URL = import.meta.env.VITE_IMG_BASE_URL;
 
@@ -28,26 +28,8 @@ function Album(){
         async function getAlbum(){
             try{
                 const getMyAlbumData = await getMyAlbum();
-                const idList = getMyAlbumData.map((card)=>card.card_id);
-        
-                if(idList.length === 0){ //앨범에 카드가 하나도 없는 사람은 카드데이터 호출 X
-                    setCards([]);
-                    setLoading(false);
-                    return ;
-                }
 
-                const myCards = await getCards({idList});
-
-                //imgPath 가공
-                const newPathData = myCards.map((card)=>({
-                    ...card,
-                    image_path : card.image_path.startsWith("SV") ? `SV/${card.image_path.split("_")[0]}/${card.image_path}.webp` 
-                        : card.image_path.startsWith("S") ? `S/${card.image_path.split("_")[0]}/${card.image_path}.webp`
-                        : card.image_path.startsWith("M") ? `MEGA/${card.image_path.split("_")[0]}/${card.image_path}.webp`
-                        : card.image_path
-                    }));
-
-                setCards(newPathData);
+                setCards(getMyAlbumData);
             }catch(error){
                 console.error(error);
             }finally{
@@ -86,16 +68,11 @@ function Album(){
 
             <div className="container mx-auto m-4">
                 <div className="grid grid-cols-6 gap-4">
-                    {cards.map((card) => (
-                        <Link to={`/cards/${card.id}`} key={card.id}>
-                        <img
-                            key={card.id}
-                            src={`${IMG_BASE_URL}/${card.image_path}`}
-                            alt={card.name}
-                            className="w-full"
-                        />
-                        </Link>
-                    ))}
+                    {
+                        cards.map((card)=>(
+                            <Card key={card.id} {...card} />
+                        ))
+                    }
                 </div>
             </div>
         </div> 

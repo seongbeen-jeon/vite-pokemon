@@ -1,11 +1,21 @@
 import {supabase} from  '../lib/supabase';
 
 export async function getMyAlbum(){
-    const {data,error} = await supabase.from('album').select('*');
+    const {data,error} = await supabase.from('album').select(`id, card_id, language, quantity, cards(title, image_path)`);
+
+    const newPathData = data.map((card)=>({
+                    ...card,
+                    title : card.cards.title,
+                    image_path : card.cards.image_path.startsWith("SV") ? `SV/${card.cards.image_path.split("_")[0]}/${card.cards.image_path}.webp` 
+                        : card.cards.image_path.startsWith("S") ? `S/${card.cards.image_path.split("_")[0]}/${card.cards.image_path}.webp`
+                        : card.cards.image_path.startsWith("M") ? `MEGA/${card.cards.image_path.split("_")[0]}/${card.cards.image_path}.webp`
+                        : card.cards.image_path
+                    }));
+
     if(error){
         console.error(error);
     }
-    return data;
+    return newPathData;
 }
 
 export async function insertCard({cardId, quantity, language}){
