@@ -54,26 +54,27 @@ export async function selectCards({cardId, cardIdList, name}){
 
 }
 
-export async function updateCard({quantity, language}){
+export async function updateCard({id, quantity, language}){
     const query = supabase.from('album')
         .update({
             quantity : quantity,
             language : language,
-        });
+        })
+        .eq('id', id);
 
     const {data,error} = await query;
     if(error){
         console.error(error);
     }
-    return ;
+    return data;
 }
 
-export async function deleteCard({cardId}){
-    const query = supabase.from('album').delete().eq('card_id',cardId);
+export async function deleteCard({id}){
+    const query = supabase.from('album').delete().eq('id', id);
     const {data,error} = await query;
     if(error){
         console.error(error);
     }
-    return ;
+    return data;
 } 
 
