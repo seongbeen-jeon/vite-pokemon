@@ -21,14 +21,14 @@ function Header(){
                     <div className="title p-1">PokeDex</div>
                 </Link>
             </div>
-            <div id="nav" className="flex gap-10">
-                <Link to="/sets" className="text-lg font-medium">도감</Link>
-                <Link to="/album" className="text-lg font-medium">앨범</Link>
+            <div id="nav" className="flex gap-10 ">
+                <Link to="/sets" className="text-lg font-medium hover:bg-gray-100">도감</Link>
+                <Link to="/album" className="text-lg font-medium hover:bg-gray-100">앨범</Link>
             </div>
             {user ? (
                 <div id="user" className ="flex gap-2 items-center">
                     <div className="p-1.5">{user?.userinfo?.nickname}님</div>
-                    <div onClick={signOut} className="shadow-md p-1.5 rounded-xl">로그아웃</div>
+                    <div onClick={signOut} className="shadow-md p-1.5 rounded-xl cursor-pointer">로그아웃</div>
                 </div>
                 )
                 :(

@@ -18,14 +18,25 @@ export async function getMyAlbum(){
     return newPathData;
 }
 
-export async function insertCard({cardId, quantity, language}){
-    const query = supabase.from('album')
-        .insert({
-            card_id : cardId,
-            quantity : quantity,
-            language : language,
-        });
-    const {data,error} = await query;
+export async function insertCard({cardId, cardList}){
+    let query = supabase.from('album');
+    let insertData = {};
+      
+    if(cardId){
+        insertData ={ card_id : cardId };
+    }
+    if(cardList){
+        insertData = cardList.map((card)=>(
+            {
+                card_id : card.id,
+                quantity : card.quantity,
+                language : card.language,
+            })
+        );
+    }
+
+    const {error} = await query.insert(insertData);
+
     if(error){
         console.error(error);
     }

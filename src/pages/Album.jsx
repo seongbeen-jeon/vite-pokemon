@@ -1,5 +1,5 @@
 import {useState, useEffect} from 'react';
-import {useNavigate} from 'react-router-dom';
+import {useNavigate, Link} from 'react-router-dom';
 
 import { getMyAlbum } from '../services/albumService';
 import {useAuth} from '../contexts/authContext';
@@ -75,7 +75,7 @@ function Album(){
                     className="w-25 mr-10 mt-5 p-1.5 
                                 text-center text-blue-500 
                                 border border-blue-500 shadow-md  rounded-xl
-                                hover:bg-[#3ba4fa] hover:text-white"
+                                hover:bg-[#3ba4fa] hover:text-white cursor-pointer"
                     onClick={()=>{setMode(mode === 'normal' ? 'update' : 'normal'); console.log("modeChanged",mode);}}>
                     {mode === 'normal' ? '수정' : '확인'}
                 </div>
@@ -108,6 +108,17 @@ function Album(){
                         ))
                     }
                 </div>
+            </div>
+
+            <div id="insertLink">
+                <Link to="/insert" 
+                    className="fixed bottom-[20vh] right-[20vh] w-24 h-24 
+                                bg-blue-500 text-6xl text-white
+                                flex justify-center items-center
+                                rounded-full shadow-lg 
+                                hover:bg-blue-600">
+                    <span className="leading-none  -translate-y-2">+</span>
+                </Link>
             </div>
         </div> 
         </>

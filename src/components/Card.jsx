@@ -55,9 +55,6 @@ export default function Card({id, card_id, title, language, image_path,quantity,
                     border border-blue-500
                     shadow-md rounded-xl
                     bg-white
-
-                    hover:bg-[#3ba4fa]
-                    hover:text-white
                     ">
                 {`X ${quantity}`}
             </div>)}

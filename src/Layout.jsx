@@ -6,7 +6,7 @@ function Layout(){
     return(
         <div id="layout" className="flex flex-col min-h-screen">
             <Header />
-            <main className="max-w-[1280px] w-full m-auto flex-1 bg-gray-50">
+            <main className="max-w-[1280px] w-full m-auto flex-1">
                 <Outlet />
             </main>
             <Footer />
