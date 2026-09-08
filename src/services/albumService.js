@@ -1,14 +1,16 @@
 import {supabase} from  '../lib/supabase';
 
+const IMG_BASE_URL = import.meta.env.VITE_IMG_BASE_URL;
+
 export async function getMyAlbum(){
     const {data,error} = await supabase.from('album').select(`id, card_id, language, quantity, cards(title, image_path)`);
 
     const newPathData = data.map((card)=>({
                     ...card,
                     title : card.cards.title,
-                    image_path : card.cards.image_path.startsWith("SV") ? `SV/${card.cards.image_path.split("_")[0]}/${card.cards.image_path}.webp` 
-                        : card.cards.image_path.startsWith("S") ? `S/${card.cards.image_path.split("_")[0]}/${card.cards.image_path}.webp`
-                        : card.cards.image_path.startsWith("M") ? `MEGA/${card.cards.image_path.split("_")[0]}/${card.cards.image_path}.webp`
+                    image_path : card.cards.image_path.startsWith("SV") ? `${IMG_BASE_URL}/SV/${card.cards.image_path.split("_")[0]}/${card.cards.image_path}.webp` 
+                        : card.cards.image_path.startsWith("S") ? `${IMG_BASE_URL}/S/${card.cards.image_path.split("_")[0]}/${card.cards.image_path}.webp`
+                        : card.cards.image_path.startsWith("M") ? `${IMG_BASE_URL}/MEGA/${card.cards.image_path.split("_")[0]}/${card.cards.image_path}.webp`
                         : card.cards.image_path
                     }));
 

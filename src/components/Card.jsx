@@ -1,6 +1,5 @@
 import {Link} from 'react-router-dom'
 
-const IMG_BASE_URL = import.meta.env.VITE_IMG_BASE_URL;
 
 export default function Card({id, card_id, title, language, image_path,quantity,mode,onDeleteCard,onUpdateCard}){
     const languageOptions = ['KO', 'JP', 'EN'];
@@ -10,7 +9,7 @@ export default function Card({id, card_id, title, language, image_path,quantity,
         <div className="relative">
             <Link to={`/cards/${card_id}`} key={id}>
                 <img
-                    src={`${IMG_BASE_URL}/${image_path}`}
+                    src={image_path}
                     alt={title}
                     className="w-full"
                 />
