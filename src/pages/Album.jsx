@@ -13,9 +13,9 @@ function Album(){
     const {user, loading : userloading} = useAuth();
     const [mode, setMode] = useState('normal'); // 수정을 위해 수정모드, 일반 모드 생성
 
-    const onDeleteCard = async ({id}) => {
+    const onDeleteCard = async (id) => {
         try {
-            await deleteCard({ id });
+            await deleteCard( id );
             setCards(cards.filter(prev => prev.id !== id));
         } catch (error) {
             console.error("Error deleting card:", error);
@@ -77,7 +77,7 @@ function Album(){
                                 border border-blue-500 shadow-md  rounded-xl
                                 hover:bg-[#3ba4fa] hover:text-white cursor-pointer"
                     onClick={()=>{setMode(mode === 'normal' ? 'update' : 'normal'); console.log("modeChanged",mode);}}>
-                    {mode === 'normal' ? '수정' : '확인'}
+                    {mode === 'normal' ? '수정모드' : '일반모드'}
                 </div>
             </div>
             

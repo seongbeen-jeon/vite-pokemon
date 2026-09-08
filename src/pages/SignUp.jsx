@@ -15,7 +15,7 @@ export default function SignUp() {
 
         if(checked){
             try {
-                const data = await signUp(email, password, nickname);
+                const data = await signUp({email, password, nickname});
                 navigate('/',{replace : true});
             } catch (error) {
                 console.error(error);

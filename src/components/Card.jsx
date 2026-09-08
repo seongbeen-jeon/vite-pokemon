@@ -19,7 +19,7 @@ export default function Card({id, card_id, title, language, image_path,quantity,
             {/*삭제 표시 */}
             {mode === "update" &&(
                 <div className="">
-                    <button className="absolute top-2 left-2 bg-white text-red-500 border border-red-500 hover:bg-red-500 hover:text-white rounded-md" onClick={() => onDeleteCard({id})}>
+                    <button className="absolute top-2 left-2 bg-white text-red-500 border border-red-500 hover:bg-red-500 hover:text-white rounded-md" onClick={() => onDeleteCard(id)}>
                         삭제
                     </button>
                 </div>

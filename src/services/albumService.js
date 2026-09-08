@@ -44,7 +44,7 @@ export async function insertCard({cardId, cardList}){
 }
 
 export async function selectCards({cardId, cardIdList, name}){
-    let query = supabase.from('album').select('*')
+    let query = supabase.from('album').select('*');
     if(id){
         query = query.eq('card_id',cardId);
     }
@@ -80,7 +80,7 @@ export async function updateCard({id, quantity, language}){
     return data;
 }
 
-export async function deleteCard({id}){
+export async function deleteCard(id){
     const query = supabase.from('album').delete().eq('id', id);
     const {data,error} = await query;
     if(error){

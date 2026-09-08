@@ -9,9 +9,6 @@ const IMG_BASE_URL = import.meta.env.VITE_IMG_BASE_URL;
 
 function CardDetail() {
     const {cardId} = useParams();
-    /*
-    카드 정보 가져오기
-    */
     const [card, setCard] = useState({});
     const [relatedCards, setRelatedCards] = useState([]);
 
@@ -19,28 +16,12 @@ function CardDetail() {
         async function getCardDetail(){
             try{
                 const data = await getCards({id:cardId});
-                //image_path 가공
-                (data[0].image_path = data[0].image_path.startsWith("SV") ? `SV/${data[0].image_path.split("_")[0]}/${data[0].image_path}.webp` 
-                        : data[0].image_path.startsWith("S") ? `S/${data[0].image_path.split("_")[0]}/${data[0].image_path}.webp`
-                        : data[0].image_path.startsWith("M") ? `MEGA/${data[0].image_path.split("_")[0]}/${data[0].image_path}.webp`
-                        : data[0].image_path);
-
-                const relatedCardsdata = await getRelatedCards(data[0], 6);
-
-                //image_path 가공
-                const newPathrelatedCards = relatedCardsdata.map((card)=>({
-                    ...card,
-                    image_path : card.image_path.startsWith("SV") ? `SV/${card.image_path.split("_")[0]}/${card.image_path}.webp` 
-                        : card.image_path.startsWith("S") ? `S/${card.image_path.split("_")[0]}/${card.image_path}.webp`
-                        : card.image_path.startsWith("M") ? `MEGA/${card.image_path.split("_")[0]}/${card.image_path}.webp`
-                        : card.image_path
-                }));
+                const relatedCardsdata = await getRelatedCards({card : data[0], limit : 6});
 
                 setCard(data[0]);
-                setRelatedCards(newPathrelatedCards);
-
                 
-
+                setRelatedCards(relatedCardsdata);
+            
             }catch(error){
                 console.error("fetch Card error : ",error);
             }
@@ -51,10 +32,10 @@ function CardDetail() {
 
     return(
         <>
-        <div className="container ">
-            <div className="card-detail flex">
-                <div className="card-image w-[360px]">
-                    <img src={`${IMG_BASE_URL}/${card?.image_path}`} alt={cardId} className="w-full"/>
+        <div id="container" className="w-[70%] mt-20 m-auto">
+            <div id ="cardDetail" className="flex">
+                <div className="card-image w-[360px] mr-20 ">
+                    <img src={card.image_path} alt={cardId} className="w-full"/>
                 </div>
                 <div className="card-info w-1/2 p-8">
                     <h1 className="text-2xl font-bold mb-4">{card.title}</h1>
@@ -64,7 +45,7 @@ function CardDetail() {
                     <p className="mb-2">일본판 이름 : {card.title}</p>
                     <p className="mb-2">영판 이름  : {card.title}</p>
                     <div id="insertBtn" className="w-full">
-                        <button className="p-3 bg-white rounded-xl shadow-sm" onClick={()=>{insertCard({cardId})}}>앨범에 추가하기</button>
+                        <button className="p-3 bg-white rounded-xl shadow-sm hover:bg-gray-50 cursor-pointer" onClick={()=>{insertCard({cardId}); alert("앨범에 추가 되었습니다")}}>앨범에 추가하기</button>
                     </div>
                 </div>
                 
