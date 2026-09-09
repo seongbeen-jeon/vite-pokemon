@@ -6,6 +6,7 @@ import { getCards } from "../services/cardService";
 import { insertCard } from "../services/albumService.js";
 import CardSearchResult from "../components/CardSearchResult.jsx";
 import CardPendingListItem from "../components/CardPendingListItem.jsx";
+import logo from '../../assets/search.png';
 
 export default function Insert(){
     const {user, loading : userloading} = useAuth();

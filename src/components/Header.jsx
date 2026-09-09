@@ -1,5 +1,6 @@
 import {Link} from 'react-router-dom';
-import logo from '../../asset/pokedex_logo.png';
+
+import logo from '../../assets/pokedex_logo.png';
 import {useAuth} from '../contexts/authContext';
 import {signOut} from '../services/authService';
 

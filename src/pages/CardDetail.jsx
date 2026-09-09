@@ -1,11 +1,9 @@
 import {useParams} from "react-router-dom";
 import {useState, useEffect} from "react";
 
-import SmallCard from "../components/smallCard";
+import SmallCard from "../components/SmallCard";
 import {getCards, getRelatedCards} from "../services/cardService.js";
 import { insertCard } from "../services/albumService.js";
-
-const IMG_BASE_URL = import.meta.env.VITE_IMG_BASE_URL;
 
 function CardDetail() {
     const {cardId} = useParams();
