@@ -17,7 +17,7 @@ function Header(){
     return (
         <header id="header" className="flex justify-between items-center px-12 h-20 shadow-sm">
             <div id="logo" className="">
-                <Link className="flex items-center" to="/">
+                <Link className="flex items-center" to="/" >
                     <img className="w-10" src={logo} alt="Pokedex Logo"/>
                     <div className="title p-1">PokeDex</div>
                 </Link>

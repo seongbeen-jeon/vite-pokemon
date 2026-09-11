@@ -54,7 +54,7 @@ function BoxDetail() {
 
     return(
     <>  
-    <div className="container mx-auto m-4">
+    <div id ="container" className="mx-auto m-4">
         <div className="grid grid-cols-6 gap-4">
             {cards.map((card) => (
                 <Link to={`/cards/${card.id}`} key={card.id}>

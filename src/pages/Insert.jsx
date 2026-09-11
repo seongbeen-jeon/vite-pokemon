@@ -6,7 +6,7 @@ import { getCards } from "../services/cardService";
 import { insertCard } from "../services/albumService.js";
 import CardSearchResult from "../components/CardSearchResult.jsx";
 import CardPendingListItem from "../components/CardPendingListItem.jsx";
-import logo from '../../assets/search.png';
+import SearchBar from "../components/SearchBar.jsx";
 
 export default function Insert(){
     const {user, loading : userloading} = useAuth();
@@ -16,18 +16,13 @@ export default function Insert(){
     const [pendingCards, setPendingCards] = useState([]);
 
 
-    //검색 인풋바에서 enter 키를 눌렀는지 확인하는 함수
-    const onKeydown = (e)=>{
-        if(e.key === "Enter"){
-            onSearch(e);
-            console.log("Enter key pressed, onSearch called");
-        }
+    const onChange = (e)=>{
+        setKeyword(e.target.value);
     }
 
     //카드를 검색하는 함수
     //키워드 가공, getCards 호출, 결과를 searchResults에 저장
     const onSearch = async (e)=>{
-        e.preventDefault();
 
         const trimmedKeyword = keyword.trim();
         let getCardsData = [];
@@ -88,34 +83,7 @@ export default function Insert(){
         <>
         <div id="container" className="w-[70%] m-auto h-full pt-20 shadow-lg border-1">
             
-            <div id="inputContainer" className="w-[70%] mx-auto h-full pt-10 ">
-                
-                {/* 검색창 */}
-                <div id="inputBar" className="w-full h-10 flex justify-center items-center border-2 border-gray-300 rounded-md p-2">
-
-                    <input
-                        type="text"
-                        placeholder="카드 이름 혹은 코드를 입력해주세요"
-                        className="w-[70%] h-full flex-1 p-2 border-none outline-none"
-                        onChange={(e) => setKeyword(e.target.value)}
-                        onKeyDown={onKeydown}
-                        value={keyword}
-                    />
-                    <button type="button" value="검색" className="w-7 h-full" 
-                        onClick={onSearch}>
-
-                        <img src="../../asset/search.png" alt="검색"></img>
-                    </button>
-
-                </div>
-
-                {/* 예시 */}
-                <div className="w-full text-xs text-gray-500 mt-2">
-                    예시) 피카츄 or M2a/234
-                </div>
-                
-            </div>
-        
+            <SearchBar value={keyword} onChange={onChange} onSearch={onSearch}/>
 
             <div id="viewContainer" className="w-[80%] mx-auto h-full pt-10 ">
                 {/* 검색 결과 */}
