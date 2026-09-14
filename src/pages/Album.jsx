@@ -16,7 +16,7 @@ function Album(){
     const [keyword, setKeyword] = useState("");
     const [myAlbum, setMyAlbum] = useState([]); // 내 앨범내 검색용 카드 저장공간
 
-    {/* 검색용 */}
+    {/* 검색 */}
     const onChange = (e)=>{
         setKeyword(e.target.value);
     }
@@ -27,11 +27,11 @@ function Album(){
 
         if(trimmedKeyword.includes('/')) { //카드 식별 코드로 검색할 때
             const [setCode, title] = trimmedKeyword.split('/');
-            result = myAlbum.filter((card)=>card.set_code == setCode && card.title == title);
+            result = myAlbum.filter((card)=>card.set_code == setCode && card.cards.title == title);
         }
         
         else{ // 카드 이름으로 검색할 때
-            result = myAlbum.filter((card)=>card.title.includes(trimmedKeyword));
+            result = myAlbum.filter((card)=>card.cards.title.includes(trimmedKeyword));
         }
         
         if(result.length === 0) { //box 이름으로 검색할 때
@@ -40,6 +40,22 @@ function Album(){
         console.log("result : ", result);
         setCards(result);
     }
+
+    {/* 정렬 */}
+    const onSort = (e)=>{
+        if(e.target.value === "title"){ // 이름순
+            setCards([...cards].sort((a,b)=>a.cards.title.localeCompare(b.cards.title, 'ko')))
+
+        } else{ // 도감번호순
+            setCards([...cards].sort((a,b)=>{
+                if(a.cards.dex_no === null) return 1;
+                if(b.cards.dex_no === null) return -1;
+                return a.cards.dex_no - b.cards.dex_no}))
+        }
+    }
+
+    {/* 필터 */}
+    
 
     {/* 수정모드 - 삭제 */}
     const onDeleteCard = async (id) => {
@@ -119,9 +135,9 @@ function Album(){
 
             <div id="option_bar" className="m-[8vh] mt-[6vh] flex justify-between items-center">
                 <div id="sort" className="">
-                    <select className="w-25 bg-white shadow-sm p-1.5">
-                        <option value="number">번호순</option>
-                        <option value="name">이름순</option>
+                    <select className="w-25 bg-white shadow-sm p-1.5" onChange={onSort}>
+                        <option value="dex_number" >도감번호</option>
+                        <option value="title" >이름</option>
                     </select>
                 </div>
                 <div id="filter" className="">
