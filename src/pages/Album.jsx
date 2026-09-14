@@ -3,8 +3,9 @@ import {useNavigate, Link} from 'react-router-dom';
 
 import { getMyAlbum } from '../services/albumService';
 import {useAuth} from '../contexts/authContext';
-import Card from '../components/Card';
 import { updateCard,deleteCard } from '../services/albumService';
+import SearchBar from '../components/SearchBar';
+import Card from '../components/Card';
 
 function Album(){
     const [cards, setCards] = useState([]);
@@ -12,7 +13,35 @@ function Album(){
     const navigate = useNavigate(); 
     const {user, loading : userloading} = useAuth();
     const [mode, setMode] = useState('normal'); // 수정을 위해 수정모드, 일반 모드 생성
+    const [keyword, setKeyword] = useState("");
+    const [myAlbum, setMyAlbum] = useState([]); // 내 앨범내 검색용 카드 저장공간
 
+    {/* 검색용 */}
+    const onChange = (e)=>{
+        setKeyword(e.target.value);
+    }
+
+    const onSearch = ()=>{
+        const trimmedKeyword = keyword.trim();
+        let result = [];
+
+        if(trimmedKeyword.includes('/')) { //카드 식별 코드로 검색할 때
+            const [setCode, title] = trimmedKeyword.split('/');
+            result = myAlbum.filter((card)=>card.set_code == setCode && card.title == title);
+        }
+        
+        else{ // 카드 이름으로 검색할 때
+            result = myAlbum.filter((card)=>card.title.includes(trimmedKeyword));
+        }
+        
+        if(result.length === 0) { //box 이름으로 검색할 때
+            result = myAlbum.filter((card)=>card.cards.pack_name.includes(trimmedKeyword));
+        }
+        console.log("result : ", result);
+        setCards(result);
+    }
+
+    {/* 수정모드 - 삭제 */}
     const onDeleteCard = async (id) => {
         try {
             await deleteCard( id );
@@ -22,6 +51,7 @@ function Album(){
         }
     };
 
+    {/* 수정모드 - 변경 */}
     const onUpdateCard = async({id, quantity, language}) => {
         try{
             console.log("onUpdateCard called with:", {id, quantity, language});
@@ -51,6 +81,7 @@ function Album(){
                 const getMyAlbumData = await getMyAlbum();
 
                 setCards(getMyAlbumData);
+                setMyAlbum(getMyAlbumData);
             }catch(error){
                 console.error(error);
             }finally{
@@ -81,6 +112,10 @@ function Album(){
                 </div>
             </div>
             
+            <div className="w-[70%] mx-auto my-10">
+                <SearchBar value={keyword} onChange={onChange} onSearch={onSearch}/>
+            </div>
+           
 
             <div id="option_bar" className="m-[8vh] mt-[6vh] flex justify-between items-center">
                 <div id="sort" className="">
