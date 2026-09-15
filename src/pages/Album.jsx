@@ -16,6 +16,14 @@ function Album(){
     const [keyword, setKeyword] = useState("");
     const [myAlbum, setMyAlbum] = useState([]); // 내 앨범내 검색용 카드 저장공간
 
+    const rarityOption = ["LOW","AR","SR","SAR","UR","PROMO"];
+    const [checkedRarity, setCheckedRarity] = useState(rarityOption); 
+
+    const typeOption = ["pokemon", "trainers"];
+    const [checkedType, setCheckedType] = useState(typeOption);
+    
+
+    
     {/* 검색 */}
     const onChange = (e)=>{
         setKeyword(e.target.value);
@@ -46,16 +54,63 @@ function Album(){
         if(e.target.value === "title"){ // 이름순
             setCards([...cards].sort((a,b)=>a.cards.title.localeCompare(b.cards.title, 'ko')))
 
-        } else{ // 도감번호순
-            setCards([...cards].sort((a,b)=>{
-                if(a.cards.dex_no === null) return 1;
+        } else if(e.target.value === "dex_number"){ // 도감번호순
+            setCards([...cards].sort((a,b)=>{ 
+                if(a.cards.dex_no === null) return 1; // 포켓몬 카드가 아닌 경우는 맨 뒤로 보낸다
                 if(b.cards.dex_no === null) return -1;
                 return a.cards.dex_no - b.cards.dex_no}))
         }
     }
 
     {/* 필터 */}
-    
+    useEffect(()=>{
+        const rarityGroup = {// 필터용
+                LOW : ["C", "U", "R", "RR","RRR"],
+                AR : ["AR","A","K"],
+                SR : ["SR","ACE","MA"],
+                SAR : ["SAR"],
+                UR : ["UR", "MUR"],
+                PROMO : ["PROMO"],
+            }
+
+        const filteredCards = myAlbum.filter((card)=>{
+            const matchedType = checkedType.includes(card.cards.card_type);
+            const matchedRarity = checkedRarity.some((rarity)=>
+                rarityGroup[rarity].includes(card.cards.rarity)
+            )
+
+            return matchedType && matchedRarity;
+        });
+
+        setCards(filteredCards);
+        
+        
+    },[checkedRarity,checkedType,myAlbum]);
+
+
+    const handleCheckRarity = (e)=>{
+        const targetRarity = e.target.value;
+
+        setCheckedRarity((prev)=>{
+            if(checkedRarity.includes(targetRarity)){
+                return prev.filter((rarity)=>rarity !== targetRarity);
+            }
+            return [...prev, targetRarity];
+        });
+    }
+
+    const handleCheckType = (e)=>{
+        const targetType = e.target.value;
+
+        setCheckedType(
+            (prev)=>{
+                if(prev.includes(targetType)){
+                    return prev.filter((type)=> type !== targetType );
+                }
+                return [...prev, targetType];
+            }
+        );
+    }
 
     {/* 수정모드 - 삭제 */}
     const onDeleteCard = async (id) => {
@@ -96,8 +151,9 @@ function Album(){
             try{
                 const getMyAlbumData = await getMyAlbum();
 
-                setCards(getMyAlbumData);
                 setMyAlbum(getMyAlbumData);
+                setCards(getMyAlbumData);
+                console.log("getMyAlbumData : ",getMyAlbumData);
             }catch(error){
                 console.error(error);
             }finally{
@@ -136,17 +192,37 @@ function Album(){
             <div id="option_bar" className="m-[8vh] mt-[6vh] flex justify-between items-center">
                 <div id="sort" className="">
                     <select className="w-25 bg-white shadow-sm p-1.5" onChange={onSort}>
+                        <option >정렬</option>
                         <option value="dex_number" >도감번호</option>
                         <option value="title" >이름</option>
                     </select>
                 </div>
-                <div id="filter" className="">
-                    <select className="w-25 bg-white shadow-sm p-1.5">
-                        <option value="all">전체</option>
-                        <option value="fire">불꽃</option>
-                        <option value="water">물</option>
-                        <option value="grass">풀</option>
-                    </select>
+                <div id="filter" className="flex flex-col items-start">
+                    <fieldset>
+                        {typeOption.map((type)=>(
+                            <label key={type} className="mr-4">
+                                <input type="checkbox" className="pr-1" 
+                                    value={type} 
+                                    checked={checkedType.includes(type)}
+                                    onChange={handleCheckType}
+                                />
+                                {type==="pokemon" ? "포켓몬" : "트레이너"}
+                            </label>
+                        ))}
+                    </fieldset>
+
+                    <fieldset className="mt-4">
+                        {rarityOption.map((rarity)=>(
+                            <label key={rarity} className="mr-4">
+                                <input type="checkbox" className="pr-1" 
+                                    value={rarity} 
+                                    checked={checkedRarity.includes(rarity)}
+                                    onChange={handleCheckRarity}
+                                />
+                                {rarity}
+                            </label>
+                        ))}
+                    </fieldset>
                 </div>
             </div>
 
