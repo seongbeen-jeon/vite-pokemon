@@ -17,9 +17,8 @@ export default function Home() {
 
   const onSearch = async () => {
     if(keyword.includes('/')){// 코드로 검색할 때
-      const [set_code, cardTitle] = keyword.split('/');
-      const data = await getCards({set_code, keyword : cardTitle});
-
+      const [setCode, cardNum] = keyword.split('/');
+      const data = await getCards({set_code : setCode, card_no : cardNum});
       setCards(data);
 
     } else{ // 카드 이름으로 검색할 때
@@ -36,7 +35,7 @@ export default function Home() {
         <div className="mt-20 w-[70%] mx-auto">
             <SearchBar value={keyword} onChange={onChange} onSearch={onSearch}/>
         </div>
-        <div id="cards container" className="grid grid-cols-6 gap-4">
+        <div id="cards container" className="w-full grid grid-cols-6 gap-4 mx-auto mt-10">
             {cards && cards.map((card) => (
                 <Link to={`/cards/${card.id}`} key={card.id}>
                     <img

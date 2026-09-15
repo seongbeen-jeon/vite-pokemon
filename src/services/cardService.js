@@ -5,7 +5,7 @@ const IMG_BASE_URL = import.meta.env.VITE_IMG_BASE_URL;
 
 export async function getCards({id,idList,set_code, card_no, keyword, limit}={}) {
     let query = supabase.from("cards").select("*");
-
+    console.log(set_code,keyword);
     if(id){
         query = query.eq("id", id);
     }

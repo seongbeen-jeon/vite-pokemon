@@ -34,8 +34,8 @@ function Album(){
         let result = [];
 
         if(trimmedKeyword.includes('/')) { //카드 식별 코드로 검색할 때
-            const [setCode, title] = trimmedKeyword.split('/');
-            result = myAlbum.filter((card)=>card.set_code == setCode && card.cards.title == title);
+            const [setCode, cardNum] = trimmedKeyword.split('/');
+            result = myAlbum.filter((card)=>card.cards.set_code === setCode && card.cards.card_no === cardNum);
         }
         
         else{ // 카드 이름으로 검색할 때
@@ -173,7 +173,7 @@ function Album(){
         <>
         <div id="body" className="w-full">
 
-            <div className="flex justify-end items-center" >
+            <div id="modeChange" className="flex justify-end items-center" >
                 <div id="updateMode" 
                     className="w-25 mr-10 mt-5 p-1.5 
                                 text-center text-blue-500 
@@ -184,7 +184,7 @@ function Album(){
                 </div>
             </div>
             
-            <div className="w-[70%] mx-auto my-10">
+            <div id="searchBar" className="w-[70%] mx-auto my-10">
                 <SearchBar value={keyword} onChange={onChange} onSearch={onSearch}/>
             </div>
            
@@ -227,7 +227,7 @@ function Album(){
             </div>
 
 
-            <div className="container mx-auto m-4">
+            <div id="container" className=" mx-auto m-4">
                 <div className="grid grid-cols-6 gap-4">
                     {
                         cards.map((card)=>(
