@@ -16,13 +16,10 @@ function BoxDetail() {
             try{
                 const data = await getCards({set_code:set_Code, limit});
             
-                console.log("box detail data : ",data);
                 setCards(data);
             
             }catch(error){
                 console.error("fetch Cards error : ",error);
-            }finally{
-                setLoading(false);
             }
         }
         getCardsList();
