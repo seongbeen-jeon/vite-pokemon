@@ -51,21 +51,26 @@ function Album(){
     }
 
     {/* 정렬 */}
-    useEffect(()=>{
-        if(sortOption === "title"){
-            setCards([...cards].sort((a,b)=>a.cards.title.localeCompare(b.cards.title, 'ko')));
-        }else if(sortOption === "dex_number"){
-            setCards([...cards].sort((a,b)=>{ 
-                if(a.cards.dex_no === null) return 1; // 포켓몬 카드가 아닌 경우는 맨 뒤로 보낸다
-                if(b.cards.dex_no === null) return -1;
-                return a.cards.dex_no - b.cards.dex_no}));
-        }
-    },[sortOption,cards]);
-
     const onSort = (e)=>{
         setSortOption(e.target.value);
         return ;
     }
+
+    const sortCards = (cardstoSort)=>{
+        if(sortOption === "title"){
+            return [...cardstoSort].sort((a,b)=>a.cards.title.localeCompare(b.cards.title, 'ko'));
+        } else if (sortOption === "dex_number"){
+            return [...cardstoSort].sort((a,b)=>{ 
+                if(a.cards.dex_no === null) return 1; // 포켓몬 카드가 아닌 경우는 맨 뒤로 보낸다
+                if(b.cards.dex_no === null) return -1;
+                return a.cards.dex_no - b.cards.dex_no});
+        }
+    }
+
+    useEffect(()=>{
+        setCards((prevCards)=>sortCards(prevCards));
+    },[sortOption]);
+
 
     {/* 필터 */}
     useEffect(()=>{
@@ -87,11 +92,12 @@ function Album(){
             return matchedType && matchedRarity;
         });
 
-        setCards(filteredCards);
-        
+        setCards(sortCards(filteredCards));
         
     },[checkedRarity,checkedType,myAlbum]);
 
+
+    
 
     const handleCheckRarity = (e)=>{
         const targetRarity = e.target.value;
@@ -158,7 +164,6 @@ function Album(){
 
                 setMyAlbum(getMyAlbumData);
                 setCards(getMyAlbumData);
-                console.log("getMyAlbumData : ",getMyAlbumData);
             }catch(error){
                 console.error(error);
             }finally{
