@@ -30,12 +30,12 @@ function CardDetail() {
 
     return(
         <>
-        <div id="container" className="w-[70%] mt-20 m-auto">
+        <div id="container" className="w-[80%] lg:w-[70%] mt-[7rem] lg:mt-[5rem] mx-auto">
             <div id ="cardDetail" className="flex">
-                <div className="card-image w-[360px] mr-20 ">
+                <div id="card" className="max-w-[400px] mr-[2rem]">
                     <img src={card.image_path} alt={cardId} className="w-full"/>
                 </div>
-                <div className="card-info w-1/2 p-8">
+                <div id="cardInfo"className="w-1/2 break-keep">
                     <h1 className="text-2xl font-bold mb-4">{card.title}</h1>
                     <p className="mb-2">도감번호 : {card.dex_no}</p>
                     <p className="mb-2">일러스트레이터 : {card.illustrator}</p>
@@ -49,9 +49,9 @@ function CardDetail() {
                 
             </div>
             
-            <div className="extra-info m-5">
+            <div id="relative cards" className="w-full mt-[2rem] lg:mt-[3rem]">
                 <div>연관 카드</div>
-                <div className="cardList flex m-4 gap-5">
+                <div id className="w-full grid grid-cols-4 lg:grid-cols-6 m-[0.5rem] gap-[1rem]">
                     {relatedCards.map((card) => (
                         <SmallCard key={card.id} id={card.id} img_path={card.image_path}/>
                     ))}

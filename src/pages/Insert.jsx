@@ -32,10 +32,13 @@ export default function Insert(){
             return;
         }
 
+        
         if(trimmedKeyword.includes("/")){ //카드가 코드로 검색 될 때
-            const [set_code, card_no] = trimmedKeyword.split("/");
-
-            getCardsData = await getCards({set_code, card_no : parseInt(card_no)});
+            let [set_code, card_no] = trimmedKeyword.split("/");
+            if(card_no.length !== 3){ // 번호가 3자리가 아닐 시 앞에 0을 채워 DB의 col값과 맞춘다.
+                card_no = card_no.padStart(3,'0'); 
+            }
+            getCardsData = await getCards({set_code, card_no});
         }else{//카드가 이름으로 검색 될 때
             getCardsData = await getCards({keyword : trimmedKeyword});
         }
@@ -81,14 +84,16 @@ export default function Insert(){
 
     return(
         <>
-        <div id="container" className="w-[70%] m-auto h-full pt-20 shadow-lg border-1">
+        <div id="container" className="w-full m-auto h-full pt-20 ">
             
-            <SearchBar value={keyword} onChange={onChange} onSearch={onSearch}/>
+            <div className="w-[70%] mx-auto">
+                <SearchBar value={keyword} onChange={onChange} onSearch={onSearch}/>
+            </div>
 
-            <div id="viewContainer" className="w-[80%] mx-auto h-full pt-10 ">
+            <div id="viewContainer" className="w-[80%] lg:w-[80%] mx-auto h-full pt-10 ">
                 {/* 검색 결과 */}
-                <div id="searchResultContainer" className="w-full h-full p-5 mx-auto">
-                    <div className="text-sm bold">
+                <div id="searchResultContainer" className="w-full h-full lg:p-5 mx-auto">
+                    <div className="min-h-[2rem] text-ms font-semibold">
                         검색결과
                     </div>
                     <div className="">
@@ -100,8 +105,8 @@ export default function Insert(){
                 </div>
                 
                 {/* 추가할 항목 */}
-                <div id="pendingCardContainer" className="w-full h-full p-5 mx-auto">
-                    <div className="text-sm bold">
+                <div id="pendingCardContainer" className="w-full h-full lg:p-5 mx-auto mt-[2rem]">
+                    <div className="min-h-[2rem] text-md font-semibold">
                         등록할 카드 목록
                     </div>
                     <div>
@@ -114,13 +119,13 @@ export default function Insert(){
         
         
             <div id="insertButton" className="flex jusity-center items-center">
-                <button className="w-40 mx-auto my-10 p-5
+                <button className="w-[10rem] mx-auto my-10 p-[1rem]
                                 text-center text-blue-500 text-l
                                 border border-blue-500 shadow-md  rounded-xl
                                 hover:bg-[#3ba4fa] hover:text-white"
                         onClick={()=>{
                             insertCard({cardList : pendingCards});
-                            navigate('/album',{});
+                            navigate('/album',{replace : true});
                         }}
                 >
                     추가하기

@@ -27,7 +27,7 @@ export default function SignUp() {
 
     return (
         <div className="flex min-h-screen w-full items-center justify-center bg-white">
-            <div className="w-full max-w-[420px] rounded-[20px] bg-white px-8 py-10 text-center shadow-[0_4px_20px_rgba(0,0,0,0.05)]">
+            <div className="w-full max-w-[420px] mx-[4rem] rounded-[20px] bg-white px-8 py-10 text-center shadow-[0_4px_20px_rgba(0,0,0,0.05)]">
 
                 <h2 className="mb-8 text-2xl font-bold text-[#1A1D1F]">
                     회원가입

@@ -3,9 +3,6 @@ import {Link} from 'react-router-dom';
 import {getCards} from "../services/cardService.js";
 import {useState, useEffect} from 'react';
 
-//box 상세 페이지에서 카드가 몇 장 보일지 제한 / 테스트용 20장
-const limit = 20;
-
 
 function BoxDetail() {
     const set_Code = useParams().set_Code;
@@ -14,7 +11,7 @@ function BoxDetail() {
     useEffect(()=>{
         async function getCardsList(){  
             try{
-                const data = await getCards({set_code:set_Code, limit});
+                const data = await getCards({set_code:set_Code});
             
                 setCards(data);
             
@@ -28,8 +25,8 @@ function BoxDetail() {
 
     return(
     <>  
-    <div id ="container" className="mx-auto mt-10">
-        <div className="grid grid-cols-6 gap-4">
+    <div id ="container" className="mx-auto m-[2rem]">
+        <div className="grid mx-[1rem] grid-cols-4 gap-[1rem] lg:grid-cols-6 lg:gap-[1rem]">
             {cards.map((card) => (
                 <Link to={`/cards/${card.id}`} key={card.id}>
                 <img

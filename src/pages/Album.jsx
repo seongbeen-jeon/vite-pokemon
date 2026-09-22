@@ -22,6 +22,7 @@ function Album(){
     const typeOption = ["pokemon", "trainers"];
     const [checkedType, setCheckedType] = useState(typeOption);
     
+    const [sortOption, setSortOption] = useState("title");
 
     
     {/* 검색 */}
@@ -50,16 +51,20 @@ function Album(){
     }
 
     {/* 정렬 */}
-    const onSort = (e)=>{
-        if(e.target.value === "title"){ // 이름순
-            setCards([...cards].sort((a,b)=>a.cards.title.localeCompare(b.cards.title, 'ko')))
-
-        } else if(e.target.value === "dex_number"){ // 도감번호순
+    useEffect(()=>{
+        if(sortOption === "title"){
+            setCards([...cards].sort((a,b)=>a.cards.title.localeCompare(b.cards.title, 'ko')));
+        }else if(sortOption === "dex_number"){
             setCards([...cards].sort((a,b)=>{ 
                 if(a.cards.dex_no === null) return 1; // 포켓몬 카드가 아닌 경우는 맨 뒤로 보낸다
                 if(b.cards.dex_no === null) return -1;
-                return a.cards.dex_no - b.cards.dex_no}))
+                return a.cards.dex_no - b.cards.dex_no}));
         }
+    },[sortOption,cards]);
+
+    const onSort = (e)=>{
+        setSortOption(e.target.value);
+        return ;
     }
 
     {/* 필터 */}
@@ -189,9 +194,9 @@ function Album(){
             </div>
            
 
-            <div id="option_bar" className="m-[8vh] mt-[6vh] flex justify-between items-center">
+            <div id="option_bar" className="m-[1rem] mt-[2rem] flex justify-between items-center">
                 <div id="sort" className="">
-                    <select className="w-25 bg-white shadow-sm p-1.5" onChange={onSort}>
+                    <select className="w-[8rem] bg-white shadow-md p-[0.5rem]" onChange={onSort}>
                         <option >정렬</option>
                         <option value="dex_number" >도감번호</option>
                         <option value="title" >이름</option>
@@ -200,7 +205,7 @@ function Album(){
                 <div id="filter" className="flex flex-col items-start">
                     <fieldset>
                         {typeOption.map((type)=>(
-                            <label key={type} className="mr-4">
+                            <label key={type} className="mr-[1rem]">
                                 <input type="checkbox" className="pr-1" 
                                     value={type} 
                                     checked={checkedType.includes(type)}
@@ -227,8 +232,8 @@ function Album(){
             </div>
 
 
-            <div id="container" className=" mx-auto m-4">
-                <div className="grid grid-cols-6 gap-4">
+            <div id="container" className="mx-auto m-[2rem]">
+                <div className="grid mx-[1rem] grid-cols-4 gap-[1rem] lg:grid-cols-6 lg:gap-[1rem]">
                     {
                         cards.map((card)=>(
                             <Card key={card.id} {...card} mode={mode} onDeleteCard={onDeleteCard} onUpdateCard={onUpdateCard} />
@@ -239,10 +244,10 @@ function Album(){
 
             <div id="insertLink">
                 <Link to="/insert" 
-                    className="fixed bottom-[20vh] right-[20vh] w-24 h-24 
+                    className="fixed bottom-[10vh] right-[10vh] w-24 h-24 
                                 bg-blue-500 text-6xl text-white
                                 flex justify-center items-center
-                                rounded-full shadow-lg 
+                                rounded-full shadow-xl 
                                 hover:bg-blue-600">
                     <span className="leading-none  -translate-y-2">+</span>
                 </Link>

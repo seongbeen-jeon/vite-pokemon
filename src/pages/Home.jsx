@@ -35,7 +35,7 @@ export default function Home() {
         <div className="mt-20 w-[70%] mx-auto">
             <SearchBar value={keyword} onChange={onChange} onSearch={onSearch}/>
         </div>
-        <div id="cards container" className="w-full grid grid-cols-6 gap-4 mx-auto mt-10">
+        <div id="cards container" className="mt-[10vh] grid mx-[1rem] grid-cols-4 gap-[1rem] lg:grid-cols-6 lg:gap-[1rem]">
             {cards && cards.map((card) => (
                 <Link to={`/cards/${card.id}`} key={card.id}>
                     <img

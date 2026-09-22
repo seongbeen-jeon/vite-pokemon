@@ -10,7 +10,7 @@ function SearchBar({value, onChange, onSearch}){
 
     return(
         <>
-        <div id="searchBarContainer" className="w-[70%] mx-auto">
+        <div id="searchBarContainer" className="w-[90%] lg:w-[70%] mx-auto">
 
             {/* 검색창 */}
             <div className="w-full mt-5vh flex justify-center">

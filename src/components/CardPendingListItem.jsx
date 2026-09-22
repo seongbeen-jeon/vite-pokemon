@@ -3,9 +3,9 @@ export default function CardPendingListItem({ card, onDelete,onUpdate }) {
 
     return(
         <>
-        <div className="flex justify-between items-center w-full h-20 p-4 border-b border-gray-300 text-sm" >
+        <div className="flex justify-between items-center gap-[1rem] w-full h-full p-2 lg:p-4 border-b border-gray-300 text-sm break-keep" >
             <div>
-                <img className="h-18" src={card.image_path} alt={card.title}></img>
+                <img className="min-w-[6rem] h-[9rem]" src={card.image_path} alt={card.title}></img>
             </div>
 
             <div>
