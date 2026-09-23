@@ -12,7 +12,6 @@ export default function SignIn() {
 
         try {
             const data = await signIn(email, password);
-            console.log(data);
             navigate('/', {replace : true});
         } catch (error) {
             console.error(error);

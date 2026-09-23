@@ -46,7 +46,6 @@ function Album(){
         if(result.length === 0) { //box 이름으로 검색할 때
             result = myAlbum.filter((card)=>card.cards.pack_name.includes(trimmedKeyword));
         }
-        console.log("result : ", result);
         setCards(result);
     }
 
@@ -136,7 +135,6 @@ function Album(){
     {/* 수정모드 - 변경 */}
     const onUpdateCard = async({id, quantity, language}) => {
         try{
-            console.log("onUpdateCard called with:", {id, quantity, language});
             await updateCard({id, quantity, language});
             setCards(prevCards => prevCards.map(card =>
                 card.id === id ? { ...card, quantity, language } : card
@@ -189,7 +187,7 @@ function Album(){
                                 text-center text-blue-500 
                                 border border-blue-500 shadow-md  rounded-xl
                                 hover:bg-[#3ba4fa] hover:text-white cursor-pointer"
-                    onClick={()=>{setMode(mode === 'normal' ? 'update' : 'normal'); console.log("modeChanged",mode);}}>
+                    onClick={()=>{setMode(mode === 'normal' ? 'update' : 'normal')}}>
                     {mode === 'normal' ? '수정모드' : '일반모드'}
                 </div>
             </div>
