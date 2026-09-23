@@ -4,7 +4,7 @@ import {normalizeKeyword} from "../util/filter.js";
 const IMG_BASE_URL = import.meta.env.VITE_IMG_BASE_URL;
 
 export async function getCards({id,idList,set_code, card_no, keyword, limit}={}) {
-    let query = supabase.from("cards").select("*");
+    let query = supabase.from("cards").select("*, pokemon(name_jp, name_en)");
     
     if(id){
         query = query.eq("id", id);
@@ -36,7 +36,7 @@ export async function getCards({id,idList,set_code, card_no, keyword, limit}={})
     if(error){ //query error
         throw error;
     }
-
+    console.log(data);
     const newPathData = data.map((card)=>({
                     ...card,
                     image_path : card.image_path.startsWith("SV") ? `${IMG_BASE_URL}/SV/${card.image_path.split("_")[0]}/${card.image_path}.webp` 
