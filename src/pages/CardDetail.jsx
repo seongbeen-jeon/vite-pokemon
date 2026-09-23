@@ -38,7 +38,7 @@ function CardDetail() {
                 <div id="cardInfo"className="w-1/2 break-keep">
                     <h1 className="text-2xl font-bold mb-4">{card.title}</h1>
                     <p className="mb-2">박스 : {card.pack_name}</p>
-                    <p className="mb-2">카드 번호 : {card.dex_no} </p>
+                    <p className="mb-2">카드 번호 : {card.card_no} </p>
                     <p className="mb-2">도감 번호 : {card.dex_no}</p>
                     <p className="mb-2">일러스트레이터 : {card.illustrator}</p>
                     <p className="mb-2">일본판 이름 : {card.pokemon && card.pokemon.name_jp}</p>
