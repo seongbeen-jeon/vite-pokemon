@@ -36,7 +36,6 @@ export async function getCards({id,idList,set_code, card_no, keyword, limit}={})
     if(error){ //query error
         throw error;
     }
-    
     const newPathData = data.map((card)=>({
                     ...card,
                     image_path : card.image_path.startsWith("SV") ? `${IMG_BASE_URL}/SV/${card.image_path.split("_")[0]}/${card.image_path}.webp` 

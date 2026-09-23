@@ -41,8 +41,8 @@ function CardDetail() {
                     <p className="mb-2">카드 번호 : {card.dex_no} </p>
                     <p className="mb-2">도감 번호 : {card.dex_no}</p>
                     <p className="mb-2">일러스트레이터 : {card.illustrator}</p>
-                    <p className="mb-2">일본판 이름 : {card.pokemon.name_jp}</p>
-                    <p className="mb-2">영판 이름  : {card.pokemon.name_en}</p>
+                    <p className="mb-2">일본판 이름 : {card.pokemon && card.pokemon.name_jp}</p>
+                    <p className="mb-2">영판 이름  : {card.pokemon && card.pokemon.name_en}</p>
                     <div id="insertBtn" className="w-full">
                         <button className="p-3 bg-white rounded-xl shadow-sm hover:bg-gray-50 cursor-pointer" onClick={()=>{insertCard({cardId}); alert("앨범에 추가 되었습니다")}}>앨범에 추가하기</button>
                     </div>

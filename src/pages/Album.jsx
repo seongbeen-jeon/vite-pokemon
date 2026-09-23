@@ -19,7 +19,7 @@ function Album(){
     const rarityOption = ["LOW","AR","SR","SAR","UR","PROMO"];
     const [checkedRarity, setCheckedRarity] = useState(rarityOption); 
 
-    const typeOption = ["pokemon", "trainers"];
+    const typeOption = ["pokemon", "non-pokemon"];
     const [checkedType, setCheckedType] = useState(typeOption);
     
     const [sortOption, setSortOption] = useState("title");
@@ -214,7 +214,7 @@ function Album(){
                                     checked={checkedType.includes(type)}
                                     onChange={handleCheckType}
                                 />
-                                {type==="pokemon" ? "포켓몬" : "트레이너"}
+                                {type==="pokemon" ? "포켓몬" : "기타"}
                             </label>
                         ))}
                     </fieldset>
