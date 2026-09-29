@@ -1,5 +1,4 @@
 import {useEffect, useState} from "react";
-import BoxTitle from "../components/BoxTitle";
 import {getBoxes} from "../services/boxService.js";
 import BoxesBlock from "../components/BoxesBlock.jsx";
 
@@ -25,9 +24,9 @@ function Sets(){
 
     },[]);
 
-    const megaSeries = boxesData.filter(box => box.name.startsWith("MEGA"));
-    const svSeries = boxesData.filter(box => box.name.startsWith("스칼렛"));
-    const ssSeries = boxesData.filter(box => box.name.startsWith("소드"));
+    const megaSeries = boxesData.filter(box => box.title.startsWith("MEGA"));
+    const svSeries = boxesData.filter(box => box.title.startsWith("스칼렛"));
+    const ssSeries = boxesData.filter(box => box.title.startsWith("소드"));
 
     if(loading){
         return <div>Loading...</div>;

@@ -32,7 +32,7 @@ function BoxDetail() {
                 <img
                     key={card.id}
                     src={card.image_path}
-                    alt={card.name}
+                    alt={card.title}
                     className="w-full"
                 />
                 </Link>

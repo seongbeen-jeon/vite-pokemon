@@ -1,7 +1,13 @@
 import { supabase } from "../../lib/server/supabase";
+import adminMiddleWare from "./adminMiddleWare/adminMiddleWare";
 
 // Box Data : json
 export async function BoxDataHandler(req,res){
+    
+    const isAdmin = await adminMiddleWare(req,res);
+
+    if(!isAdmin) return;
+
     if(req.method !== "POST"){
         return res.status(405).json({
             message : "Method Not Allowed",

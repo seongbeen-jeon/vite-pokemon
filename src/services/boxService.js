@@ -10,7 +10,7 @@ export async function getBoxes({code, keyword}={}) {
 
     if(keyword){
         const normalizedKeyword = normalizeKeyword(keyword);
-        query = query.ilike("name", `「%${normalizedKeyword}%`);
+        query = query.ilike("title", `「%${normalizedKeyword}%`);
     }
 
     //소드 실드 이후 박스들만 확인
