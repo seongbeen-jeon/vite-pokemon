@@ -9,6 +9,7 @@ import CardDetail from './pages/CardDetail.jsx';
 import SignIn from './pages/SignIn.jsx';
 import SignUp from './pages/SignUp.jsx';
 import Insert from './pages/Insert.jsx';
+import Admin from './pages/Admin.jsx';
 
 function App() {
   return (
@@ -21,7 +22,8 @@ function App() {
         <Route path="/sets/:set_Code" element={<BoxDetail/>}/>
         <Route path="/cards/:cardId" element={<CardDetail/>}/>
         <Route path="/signin" element={<SignIn/>}></Route>
-        <Route path='/signup' element={<SignUp/>}></Route>
+        <Route path="/signup" element={<SignUp/>}></Route>
+        <Route path="/admin" element={<Admin/>}></Route>
       </Route>
     </Routes>
   )
