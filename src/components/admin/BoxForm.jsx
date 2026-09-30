@@ -11,14 +11,14 @@ export default function BoxForm(){
     const handleSubmit = async (e)=>{
         e.preventDefault();
 
-        const formdata = new FromData(e.currentTarget);
+        const formdata = new FormData(e.currentTarget);
         const data = Object.fromEntries(formdata);
 
-        const response = await fetch(`${API_URL}/api/insertBox`,{
-            Method : "POST",
+        const response = await fetch(`http://localhost:3000/api/admin/insertBox`,{ // test용 로컬 api 서버 주소
+            method : "POST",
             headers : {
                 "Content-Type" : "application/json",
-                Authorization : `Bearer ${session.accress_token}`,
+                Authorization : `Bearer ${session.access_token}`,
             },
             body : JSON.stringify(data),
         });

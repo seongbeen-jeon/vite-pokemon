@@ -41,9 +41,20 @@
             2.1. 원인 : 배포된 주소로 홈을 통해 페이지를 넘어 가지않고 바로 /sets, /album등으로 들어가면 react router를 거치지않아 라우팅이 되지 않는 오류(Fall back, SPA rewrite) 발생
 
             2.2.  해결방안 : vercel 설정에 rewrite를 추가해서 사용자가 접근시 root부터 내려가게 해서 react router를 타고 접근할 수 있게 수정했다.
+    2026-09-29
+        1. api 배포 과정에서 서버가 요청을 받으면 바로 다운 되는 문제 발생
+            1.1. 원인 : vercel function으로 함수를 배포할 때 supabase client 생성에 필요한 환경 변수 SUPABASE_URL을 프론트에서 사용하는것과 동일한 걸로 사용하려고 했다.
+                개발용 환경변수를 생성해서 값을 넣어도 프론트에서 사용하는 VITE_SUPABASE_URL과 충돌하여 SUPABASE_URL 변수가 undefined 되었다.
+                같은 방식으로 secret_key를 넣을때는 .env.local, vercel_cli 두 경우 전부 읽혔던 것을 보면 아마 SUPABASE_URL 이라는 이름으로 변수를 등록할때 우선순위나 env 주입에 문제가 생겼던 것으로 추측할 수 있다.
+            
+            1.2. 해결방안 : 개발용 환경변수나 .env.local 등으로 작업하던 SUPABASE_URL 을 지우고 원래 사용하던 .env 파일에서 SUPABASE_URL 로 값을 넣어주니 해결되었다.
 
+    2026-09-30
+        1. 로컬 환경에서 Vercel dev를 통한 localhost:3000/에 접근시 서버가 다운되는 현상 발생
+            1.1. 원인 : 배포시 fall back 문제 때문에 vercel.json 파일에 rewrite 설정을 넣었는데 이겔로 인해 vercel dev에서 / 요청이 들어오면 vercel의 rewrite와 vite의 개발 서버 처리 방식이 꼬이면서 Vite가 index.html을 HTML entry가 아니라 import 분석 대상으로 처리 하려고 해서 문제 발생
+
+            1.2. 해결방안 : local test 환경에서 사용을 위해 vercel.json에서 rewrite 부분을 제거  -> 나중에 배포시 다시 넣어야한다.
 챌린지
-    1. vercel을 사용해서 배포중인데 404가 너무 자주 뜬다. 문제 확인 필요
 
     2. BoxDetail 페이지 최적화 :  박스 디테일에서 로딩시 100~300장 정도의 이미지를 받아오는데 너무 오래 걸린다. 해결 필요
         2.1. 초기지연 개선 - lazy loading, 무한 스크롤 도입 검토
