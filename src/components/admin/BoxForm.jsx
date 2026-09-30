@@ -60,7 +60,7 @@ export default function BoxForm(){
                     출시 날짜
                 </div>
                 <div>
-                    <input type="date" name="releaseDate"></input>
+                    <input type="date" name="release_date"></input>
                 </div>
             </div>
             <div>

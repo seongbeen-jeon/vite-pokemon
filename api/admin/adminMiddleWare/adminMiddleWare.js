@@ -1,12 +1,10 @@
 import { supabase } from "../../../lib/server/supabase.js";
 
-export default async function adminMiddleWare(req,res){
+export default async function adminMiddleWare(req){
     const authHeader = req.headers.authorization;
 
-    if(!authHeader?.startWith("Bearer ")){
-        return res.status(401).json({
-            message : "로그인이 필요합니다",
-        });
+    if(!authHeader?.startsWith("Bearer")){
+        return false;
     }
 
     const token = authHeader.split(" ")[1];
@@ -14,22 +12,19 @@ export default async function adminMiddleWare(req,res){
     const {data : {user}, error : userError} = await supabase.auth.getUser(token);
 
     if(userError || !user){
-        return res.status(401).json({
-            message : "유효하지 않은 사용자입니다.",
-        });
+        return false;
     }
 
+
     const {data : userinfo, error : adminError} = await supabase
-        .from(users)
+        .from("userinfo")
         .select("role")
         .eq("id", user.id)
-        .single();
-    
+        .single(); 
+
     if(adminError || userinfo?.role !=="admin"){
-        return res.status(403).json({
-            message : "관리자 권한이 없습니다",
-        });
+        return false;
     }
     
-    return user;
+    return true;
 }
