@@ -54,6 +54,17 @@
             1.1. 원인 : 배포시 fall back 문제 때문에 vercel.json 파일에 rewrite 설정을 넣었는데 이겔로 인해 vercel dev에서 / 요청이 들어오면 vercel의 rewrite와 vite의 개발 서버 처리 방식이 꼬이면서 Vite가 index.html을 HTML entry가 아니라 import 분석 대상으로 처리 하려고 해서 문제 발생
 
             1.2. 해결방안 : local test 환경에서 사용을 위해 vercel.json에서 rewrite 부분을 제거  -> 나중에 배포시 다시 넣어야한다.
+
+        2. 서버에 api 호출 시 500번대 에러를 나타내며 다운되는 현상 발생
+            2.1. 원인 : api 코드에 await 이 빠져 결과 값이 들어가야 하는곳에 Promise가 들어가거나, 오타 등으로 인해 DB와 정상적이 연결이 되지않아서 문제 발생
+
+            2.2. 해결방안 : 각 함수, 처리 마다 console.log를 달아 문제점을 파악한 뒤 오타 수정 및 DB의 col에 정상적으로 맞춰주었다.
+                -> 문제가 내가 생각한 에러 코드에 맞지않게 나타날 수 있으니 문제가 발생 할 구간과 에러코드를 더 자세히 구상하자.
+    
+    2026-10-06
+        1. api는 성공적으로 동작했지만 서버에서 Assertion 오류 발생 Assertion failed: !(handle->flags & UV_HANDLE_CLOSING), file src\win\async.c, line 76
+            1.1. 원인 : Windows에서 Node.js 의 libuv가 이미 닫히고 있는 handledp 다시 작업을 걸어서 문제 발생.
+            1.2. 해결 방안 : 코드는 문제없이 작동 -> node의 문제라고 생각해서 버전을 24 에서 22로 내렸더니 문제가 해결되었다.
 챌린지
 
     2. BoxDetail 페이지 최적화 :  박스 디테일에서 로딩시 100~300장 정도의 이미지를 받아오는데 너무 오래 걸린다. 해결 필요

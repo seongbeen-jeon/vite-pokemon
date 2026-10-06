@@ -4,7 +4,7 @@ import {useNavigate} from "react-router-dom";
 import {useAuth} from "../contexts/authContext";
 import BoxForm from "../components/admin/BoxForm";
 import CardForm from "../components/admin/CardForm";
-import PokemonForm from "../components/admin/CardForm";
+import PokemonForm from "../components/admin/PokemonForm";
 
 
 

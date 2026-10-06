@@ -1,7 +1,10 @@
-import { supabase } from "../../lib/server/supabase";
+import {formidable} from "formidable";
+import fs from "fs/promises";
 
-// Pokemon Data : json
-export async function BoxDataHandler(req,res){
+import { supabase } from "../../lib/server/supabase.js";
+
+// Pokemon Data : multipart/form-data
+export default async function BoxDataHandler(req,res){
     if(req.method !== "POST"){
         return res.status(405).json({
             message : "Method Not Allowed",
@@ -9,7 +12,14 @@ export async function BoxDataHandler(req,res){
     }
 
     try{
-        const data = req.body;
+        const form = formidable({});
+        const [fields, files] = await form.parse(req);
+
+        const file = files.file[0];
+
+        const text = await fs.readFile(file.filepath, 'utf-8');
+
+        const data = JSON.parse(text);
 
         if(!data){
             return res.status(400).json({
@@ -19,24 +29,28 @@ export async function BoxDataHandler(req,res){
 
         //data 가공 logic
 
-        const {result , error} = supabase
-            .from("boxes")
+        const { data: result, error:DBerror } = await supabase
+            .from("pokemon")
             .insert(data);
 
-        if(error){ // DB insert에서 발생한 에러
+        if(DBerror){ // DB insert에서 발생한 에러
+            
             return res.status(500).json({
-                message : error.message,
+                message : DBerror.message,
             });
         }
 
+        
         return res.status(200).json({
-            message : "Box data inserted successfully",
+            message : "Pokemon data inserted successfully",
             data : result,
         });
 
     }catch(error){
-        return res.status(500).json({
-            message : "서버 오류가 발생했습니다."
-        });
-    }
+    console.error("insertPokemon error:", error);
+
+    return res.status(500).json({
+        message : error.message,
+    });
+}
 }
