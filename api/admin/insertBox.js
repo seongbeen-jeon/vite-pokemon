@@ -1,5 +1,5 @@
 import { supabase } from "../../lib/server/supabase.js";
-import adminMiddleWare from "./adminMiddleWare/adminMiddleWare.js";
+import adminMiddleware from "./middleware/adminMiddleware.js";
 
 // Box Data : json
 export default async function BoxDataHandler(req,res){
@@ -18,7 +18,7 @@ export default async function BoxDataHandler(req,res){
 
 
     {/* admin 검증 */}
-    const isAdmin = await adminMiddleWare(req);
+    const isAdmin = await adminMiddleware(req);
     if(!isAdmin) {
         return res.status(403).json({
             message : "관리자 권한이 없습니다.",

@@ -1,6 +1,6 @@
 import { supabase } from "../../../lib/server/supabase.js";
 
-export default async function adminMiddleWare(req){
+export default async function adminMiddleware(req){
     const authHeader = req.headers.authorization;
 
     if(!authHeader?.startsWith("Bearer")){

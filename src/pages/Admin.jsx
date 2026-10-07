@@ -3,8 +3,10 @@ import {useNavigate} from "react-router-dom";
 
 import {useAuth} from "../contexts/authContext";
 import BoxForm from "../components/admin/BoxForm";
-import CardForm from "../components/admin/CardForm";
+import CardDataForm from "../components/admin/CardDataForm";
+import CardImageForm from "../components/admin/CardImageForm";
 import PokemonForm from "../components/admin/PokemonForm";
+
 
 
 
@@ -25,12 +27,6 @@ export default function Admin(){
         }
     },[user,userloading,navigate]);
 
-    //insert box logic
-
-    //insert cards logic
-
-    //insert pokemon logic
-
     return (
         <>
         <div id="body" className="w-full">
@@ -44,7 +40,12 @@ export default function Admin(){
                     <div className="w-[95%] mx-auto p-[0.5rem] text-md font-normal cursor-pointer rounded-lg hover:bg-gray-100"
                         onClick={()=>setActiveMenu("card")}
                     >
-                        카드 추가하기
+                        카드 데이터 추가하기
+                    </div>
+                    <div className="w-[95%] mx-auto p-[0.5rem] text-md font-normal cursor-pointer rounded-lg hover:bg-gray-100"
+                        onClick={()=>setActiveMenu("cardImage")}
+                    >
+                        카드 이미지 추가하기
                     </div>
                     <div className="w-[95%] mx-auto p-[0.5rem] text-md font-normal cursor-pointer rounded-lg hover:bg-gray-100"
                         onClick={()=>setActiveMenu("pokemon")}
@@ -55,7 +56,8 @@ export default function Admin(){
                 <div id="view" className="col-span-8">
 
                     {activeMenu === "box" && <BoxForm/>}
-                    {activeMenu === "card" && <CardForm/>}
+                    {activeMenu === "card" && <CardDataForm/>}
+                    {activeMenu === "cardImage" && <CardImageForm/>}
                     {activeMenu === "pokemon" && <PokemonForm/>}
 
                 </div>

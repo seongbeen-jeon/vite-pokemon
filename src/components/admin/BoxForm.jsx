@@ -1,12 +1,9 @@
 import {useState} from "react";
-import {supabase} from "../../lib/supabase";
-
-
-const API_URL = import.meta.env.VITE_SUPABASE_URL;
-const {data : {session}} = await supabase.auth.getSession();
+import {useAuth} from "../../contexts/authContext.jsx";
 
 export default function BoxForm(){
     const [imageUrl, setImageUrl] = useState("");
+    const {session} = useAuth();
 
     const handleSubmit = async (e)=>{
         e.preventDefault();
@@ -14,7 +11,7 @@ export default function BoxForm(){
         const formdata = new FormData(e.currentTarget);
         const data = Object.fromEntries(formdata);
 
-        const response = await fetch(`http://localhost:3000/api/admin/insertBox`,{ // test용 로컬 api 서버 주소
+        const response = await fetch(`/api/admin/insertBox`,{
             method : "POST",
             headers : {
                 "Content-Type" : "application/json",

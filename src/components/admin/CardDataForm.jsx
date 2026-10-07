@@ -1,25 +1,23 @@
 import {useAuth} from "../../contexts/authContext.jsx";
 
-export default function PokemonForm(){
-    const { session } = useAuth();
+export default function CardDataForm(){
+    const {session} = useAuth();
 
-    const handleSubmit = async(e)=>{
+    const handleSubmit = async (e)=>{
         e.preventDefault();
-        
-        const formData = new FormData(e.currentTarget);
 
-        const response = await fetch("/api/admin/insertPokemon",{
+        const formData = new FormData(e.currentTarget);
+        const response = await fetch("/api/admin/insertCardData",{
             method : "POST",
             headers : {
-                Authorization : `Bearer ${session.access_token}`
+                Authorization : `Bearer ${session.access_token}`,
             },
             body : formData,
         });
 
         console.log("response : ", response);
-
         if(response.ok){
-            alert("포켓몬 데이터가 성공적으로 추가되었습니다.");
+            alert("카드 데이터가 성공적으로 추가되었습니다.");
         }
     }
 
