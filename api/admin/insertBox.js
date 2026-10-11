@@ -4,19 +4,6 @@ import adminMiddleware from "./middleware/adminMiddleware.js";
 // Box Data : json
 export default async function BoxDataHandler(req,res){
     
-
-    {/* 테스트 환경에서 CORS 회피용 */}
-    res.setHeader("Access-Control-Allow-Origin", "http://localhost:5173");
-    res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
-    res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
-    
-
-    // 브라우저의 CORS preflight 요청 처리
-    if (req.method === "OPTIONS") {
-        return res.status(200).end();
-    }
-
-
     {/* admin 검증 */}
     const isAdmin = await adminMiddleware(req);
     if(!isAdmin) {

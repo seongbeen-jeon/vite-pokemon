@@ -89,6 +89,8 @@ export default async function cardsImageHandler(req,res){
             message : "Data inserted successfully",
         });    
     }catch(error){
+        console.error("이미지 업로드 실패:", error);
+        
         return res.status(500).json({
             message : error.message,
         });
