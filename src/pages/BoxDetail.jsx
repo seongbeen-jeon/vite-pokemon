@@ -1,10 +1,9 @@
 import {useParams} from 'react-router-dom';
-import {Link} from 'react-router-dom';
 import {getCards} from "../services/cardService.js";
 import {useState, useEffect} from 'react';
+import { Cardgrid } from '../components/card/CardGrid.jsx';
 
-
-function BoxDetail() {
+export default function BoxDetail() {
     const set_Code = useParams().set_Code;
     const [cards, setCards] = useState([]);
     
@@ -26,21 +25,8 @@ function BoxDetail() {
     return(
     <>  
     <div id ="container" className="mx-auto m-[2rem]">
-        <div className="grid mx-[1rem] grid-cols-4 gap-[1rem] lg:grid-cols-6 lg:gap-[1rem]">
-            {cards.map((card) => (
-                <Link to={`/cards/${card.id}`} key={card.id}>
-                <img
-                    key={card.id}
-                    src={card.image_path}
-                    alt={card.title}
-                    className="w-full"
-                />
-                </Link>
-            ))}
-        </div>
+        <Cardgrid cards={cards}/>
     </div>
     </>
     )
 }
-
-export default BoxDetail;
