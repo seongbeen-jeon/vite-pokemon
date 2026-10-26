@@ -4,11 +4,10 @@ import {useState} from 'react';
 export default function CardItem({card}){
     const [isLoaded, setIsLoaded] = useState(false);
     const [hasError, setHasError] = useState(false);
-    console.log("CardItem 진입");
 
     return(
     <>
-        <Link to={`/cards/${card.cardId}`}>
+        <Link to={`/cards/${card.id}`}>
             <div className="relative aspect-[3/4] w-full mx-[1rem]">
                 {!isLoaded && !hasError && (
                     <div className="absolute inset-0 animate-pulse bg-gray-200" />
