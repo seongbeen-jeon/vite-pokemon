@@ -146,22 +146,12 @@ function Album(){
     
 
     {/* 수정모드 - 삭제 */}
-    // const onDeleteCard = async (id) => {
-    //     try {
-    //         await deleteCard( id );
-    //         setCards(cards.filter(prev => prev.id !== id));
-    //     } catch (error) {
-    //         console.error("Error deleting card:", error);
-    //     }
-    // };
     const onDeleteCard = (id)=>{
-        console.log("onDeleteCard / id : ",id);
-        
         setPendingDeletes(prev=>{
             if(prev.includes(id)){
                 return prev.filter( item => item !== id)
             }
-            console.log("onDeleteCard / pedingDelete prev : ",prev);
+
             return prev.includes(id)? prev : [...prev,id]
             }
         );
@@ -173,18 +163,7 @@ function Album(){
     };
 
     {/* 수정모드 - 변경 */}
-    // const onUpdateCard = async({id, quantity, language}) => {
-    //     try{
-    //         await updateCard({id, quantity, language});
-    //         setCards(prevCards => prevCards.map(card =>
-    //             card.id === id ? { ...card, quantity, language } : card
-    //         ));
-    //     }catch(error){
-    //         console.error("Error updating card:", error);
-    //     }
-    // };
     const onUpdateCard = ({id, quantity, language})=>{
-        console.log("Album / onUpdateCard, quantity : ", quantity );
         setPendingUpdates(prev=>({
             ...prev,
             [id] : {"quantity" : quantity, "language" : language}
@@ -192,7 +171,6 @@ function Album(){
     };
 
     const handleUpdatesSubmit = async ()=>{
-        console.log("handleUpdateSubmit / pendingDeletes : ",pendingDeletes , " pendingUpdates : ",pendingUpdates);
         const success = await saveAlbumChanges({pendingDeletes, pendingUpdates});
 
         if(!success){

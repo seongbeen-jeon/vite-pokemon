@@ -67,9 +67,6 @@ export async function selectCards({cardId, cardIdList, name}){
 }
 
 export async function saveAlbumChanges({pendingUpdates,pendingDeletes}){
-    Object.entries(pendingUpdates).map(
-        ([id,values])=>(console.log("albumPages / saveAlbumChanges : ",{id : Number(id), ...values,}))
-    );
     const { error } = await supabase.rpc(
         "save_album_changes"
         ,{
