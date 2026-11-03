@@ -211,7 +211,7 @@ function Album(){
         }
     }
 
-    {}
+
     useEffect(()=>{
 
         if(userloading) return;
@@ -308,7 +308,7 @@ function Album(){
                                 quantity :
                                     pendingUpdates[card.id]?.quantity ?? card.quantity,
                                 isUpdated :
-                                    pendingUpdates[card.id] ? true : null,
+                                    pendingUpdates[card.id] ? true : false,
                                 isDeleted :
                                     pendingDeletes.includes(card.id) ? true : false,
                             }
