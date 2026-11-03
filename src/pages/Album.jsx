@@ -1,100 +1,69 @@
-import {useState, useEffect} from 'react';
+import {useState, useEffect,useMemo} from 'react';
 import {useNavigate, Link} from 'react-router-dom';
 
 import { getMyAlbum } from '../services/albumService';
 import {useAuth} from '../contexts/authContext';
-import { updateCard,deleteCard } from '../services/albumService';
+import {saveAlbumChanges} from '../services/albumService';
 import SearchBar from '../components/SearchBar';
 import Card from '../components/Card';
 
 function Album(){
-    const [cards, setCards] = useState([]);
-    const [loading, setLoading] = useState(true);
     const navigate = useNavigate(); 
+
+    const [loading, setLoading] = useState(true);
     const {user, loading : userloading} = useAuth();
+
     const [mode, setMode] = useState('normal'); // 수정을 위해 수정모드, 일반 모드 생성
+
+    const [myAlbum, setMyAlbum] = useState([]); // 내 앨범 원본 데이터
+
     const [keyword, setKeyword] = useState("");
-    const [myAlbum, setMyAlbum] = useState([]); // 내 앨범내 검색용 카드 저장공간
+    const [searchedKeyword,setSearchedKeyword] = useState("");
 
-    const rarityOption = ["LOW","AR","SR","SAR","UR","PROMO"];
-    const [checkedRarity, setCheckedRarity] = useState(rarityOption); 
-
-    const typeOption = ["pokemon", "non-pokemon"];
-    const [checkedType, setCheckedType] = useState(typeOption);
-    
-    const [sortOption, setSortOption] = useState("title");
-
-    
-    {/* 검색 */}
-    const onChange = (e)=>{
-        setKeyword(e.target.value);
-    }
-
-    const onSearch = ()=>{
-        const trimmedKeyword = keyword.trim();
-        let result = [];
-
-        if(trimmedKeyword.includes('/')) { //카드 식별 코드로 검색할 때
-            const [setCode, cardNum] = trimmedKeyword.split('/');
-            result = myAlbum.filter((card)=>card.cards.set_code === setCode && card.cards.card_no === cardNum);
-        }
-        
-        else{ // 카드 이름으로 검색할 때
-            result = myAlbum.filter((card)=>card.cards.title.includes(trimmedKeyword));
-        }
-        
-        if(result.length === 0) { //box 이름으로 검색할 때
-            result = myAlbum.filter((card)=>card.cards.pack_name.includes(trimmedKeyword));
-        }
-        setCards(result);
-    }
-
-    {/* 정렬 */}
-    const onSort = (e)=>{
-        setSortOption(e.target.value);
-        return ;
-    }
-
-    const sortCards = (cardstoSort)=>{
-        if(sortOption === "title"){
-            return [...cardstoSort].sort((a,b)=>a.cards.title.localeCompare(b.cards.title, 'ko'));
-        } else if (sortOption === "dex_number"){
-            return [...cardstoSort].sort((a,b)=>{ 
-                if(a.cards.dex_no === null) return 1; // 포켓몬 카드가 아닌 경우는 맨 뒤로 보낸다
-                if(b.cards.dex_no === null) return -1;
-                return a.cards.dex_no - b.cards.dex_no});
-        }
-    }
-
-    useEffect(()=>{
-        setCards((prevCards)=>sortCards(prevCards));
-    },[sortOption]);
-
-
-    {/* 필터 */}
-    useEffect(()=>{
-        const rarityGroup = {// 필터용
-                LOW : ["C", "U", "R", "RR","RRR"],
+    const rarityGroup = {// 필터용
+                LOW : ["C", "U", "R", "RR","RRR", "temp"],
                 AR : ["AR","A","K"],
                 SR : ["SR","ACE","MA"],
                 SAR : ["SAR"],
                 UR : ["UR", "MUR"],
                 PROMO : ["PROMO"],
             }
+    const rarityOption = ["LOW","AR","SR","SAR","UR","PROMO"];
+    const [checkedRarity, setCheckedRarity] = useState(rarityOption); 
+    const typeOption = ["pokemon", "non-pokemon"];
+    const [checkedType, setCheckedType] = useState(typeOption);
+    
+    const [sortOption, setSortOption] = useState("title");
 
-        const filteredCards = myAlbum.filter((card)=>{
-            const matchedType = checkedType.includes(card.cards.card_type);
-            const matchedRarity = checkedRarity.some((rarity)=>
-                rarityGroup[rarity].includes(card.cards.rarity)
-            )
+    const [pendingUpdates, setPendingUpdates] = useState({});
+    const [pendingDeletes, setPendingDeletes] = useState([]);
+    
 
-            return matchedType && matchedRarity;
-        });
+    {/* 앨범 데이터 받아오기 */}
+    const fetchMyAlbum = async () =>{
+        try{
+            const data = await getMyAlbum();
+            setMyAlbum(data);
+            return true;
+        }catch(error){
+            console.error("앨범 데이터 조회 실패 : ",error);
+            return false;
+        }
+    }
 
-        setCards(sortCards(filteredCards));
-        
-    },[checkedRarity,checkedType,myAlbum]);
+    {/* 검색 */}
+    const onChange = (e)=>{
+        setKeyword(e.target.value);
+    }
 
+    const onSearch = ()=>{
+        setSearchedKeyword(keyword.trim().toLowerCase());
+    }
+
+    {/* 정렬 */}
+    const onSort = (e)=>{
+        setSortOption(e.target.value);
+    }
 
     
 
@@ -122,30 +91,127 @@ function Album(){
         );
     }
 
-    {/* 수정모드 - 삭제 */}
-    const onDeleteCard = async (id) => {
-        try {
-            await deleteCard( id );
-            setCards(cards.filter(prev => prev.id !== id));
-        } catch (error) {
-            console.error("Error deleting card:", error);
+    {/* 검색, 필터, 정렬 통합 */}
+    const visibleCards = useMemo(()=>{
+        
+        let result = myAlbum;
+        
+        {/* 검색 */}
+        if(searchedKeyword !== ""){
+            if(searchedKeyword.includes("/")){//카드 식별 코드로 검색할 때
+                const [setCode, cardNum] = searchedKeyword.split("/");
+
+                result = myAlbum.filter((card)=>card.cards.set_code?.toLowerCase() === setCode && card.cards.card_no === cardNum);
+            }else{ // 카드 이름으로 검색할 때
+
+
+                result = myAlbum.filter((card)=>card.cards.title?.toLowerCase().includes(searchedKeyword));
+            }
+            
+            if(result.length === 0) { //둘 다 아니면 box 이름으로 검색했는지 확인
+                result = myAlbum.filter((card)=>card.cards.pack_name.includes(searchedKeyword));
+            }
+        
         }
+        
+        {/* 필터 */}
+        result = result.filter((card)=>{
+            
+            const matchedType = checkedType.includes(card.cards.card_type);
+            const matchedRarity = checkedRarity.some((rarity)=>
+                rarityGroup[rarity]?.includes(card.cards.rarity)
+            )
+            
+            return matchedType && matchedRarity ;
+        });
+        
+        {/* 정렬 */}
+        if(sortOption === "title"){
+            return [...result].sort((a,b)=>a.cards.title.localeCompare(b.cards.title, 'ko'));
+        } else if (sortOption === "dex_number"){
+            return [...result].sort((a,b)=>{ 
+                if(a.cards.dex_no === null) return 1; // 포켓몬 카드가 아닌 경우는 맨 뒤로 보낸다
+                if(b.cards.dex_no === null) return -1;
+                return a.cards.dex_no - b.cards.dex_no});
+        }
+        
+        return result;
+    },[
+        myAlbum,
+        searchedKeyword,
+        checkedRarity,
+        checkedType,
+        sortOption,
+    ]);
+    
+
+    {/* 수정모드 - 삭제 */}
+    // const onDeleteCard = async (id) => {
+    //     try {
+    //         await deleteCard( id );
+    //         setCards(cards.filter(prev => prev.id !== id));
+    //     } catch (error) {
+    //         console.error("Error deleting card:", error);
+    //     }
+    // };
+    const onDeleteCard = (id)=>{
+        console.log("onDeleteCard / id : ",id);
+        
+        setPendingDeletes(prev=>{
+            if(prev.includes(id)){
+                return prev.filter( item => item !== id)
+            }
+            console.log("onDeleteCard / pedingDelete prev : ",prev);
+            return prev.includes(id)? prev : [...prev,id]
+            }
+        );
+        setPendingUpdates(prev=>{
+            const next = {...prev};
+            delete next[id];
+            return next;
+        });
     };
 
     {/* 수정모드 - 변경 */}
-    const onUpdateCard = async({id, quantity, language}) => {
-        try{
-            await updateCard({id, quantity, language});
-            setCards(prevCards => prevCards.map(card =>
-                card.id === id ? { ...card, quantity, language } : card
-            ));
-        }catch(error){
-            console.error("Error updating card:", error);
-        }
+    // const onUpdateCard = async({id, quantity, language}) => {
+    //     try{
+    //         await updateCard({id, quantity, language});
+    //         setCards(prevCards => prevCards.map(card =>
+    //             card.id === id ? { ...card, quantity, language } : card
+    //         ));
+    //     }catch(error){
+    //         console.error("Error updating card:", error);
+    //     }
+    // };
+    const onUpdateCard = ({id, quantity, language})=>{
+        console.log("Album / onUpdateCard, quantity : ", quantity );
+        setPendingUpdates(prev=>({
+            ...prev,
+            [id] : {"quantity" : quantity, "language" : language}
+        }));
     };
 
+    const handleUpdatesSubmit = async ()=>{
+        console.log("handleUpdateSubmit / pendingDeletes : ",pendingDeletes , " pendingUpdates : ",pendingUpdates);
+        const success = await saveAlbumChanges({pendingDeletes, pendingUpdates});
 
+        if(!success){
+            alert("수정에 실패했습니다");
+            return ;
+        }
 
+        const refreshed = await fetchMyAlbum();
+
+        if(refreshed){
+            setPendingDeletes([]);
+            setPendingUpdates({});
+            alert("수정 완료!");
+        }else{
+            alert("수정은 완료 되었으나, 앨범 데이터를 새로 불러오지 못했습니다. 새로고침을 해주세요");
+        }
+    }
+
+    {}
     useEffect(()=>{
 
         if(userloading) return;
@@ -156,19 +222,14 @@ function Album(){
             return ;
         }
 
-        async function getAlbum(){
+        const getAlbum = async ()=>{
             try{
-                const getMyAlbumData = await getMyAlbum();
-
-                setMyAlbum(getMyAlbumData);
-                setCards(getMyAlbumData);
-            }catch(error){
-                console.error(error);
+                await fetchMyAlbum();
             }finally{
                 setLoading(false);
             }
-        }
-
+        };
+        
         getAlbum();
     },[user,userloading, navigate]);
 
@@ -188,7 +249,10 @@ function Album(){
                                 border border-blue-500 shadow-md  rounded-xl
                                 hover:bg-[#3ba4fa] hover:text-white cursor-pointer"
                     onClick={()=>{setMode(mode === 'normal' ? 'update' : 'normal')}}>
-                    {mode === 'normal' ? '수정모드' : '일반모드'}
+                    {mode === 'normal' ? 
+                        <div>수정모드</div>
+                        : 
+                        <div onClick={handleUpdatesSubmit}>완료</div>}
                 </div>
             </div>
             
@@ -238,9 +302,25 @@ function Album(){
             <div id="container" className="mx-auto m-[2rem]">
                 <div className="grid mx-[1rem] grid-cols-4 gap-[1rem] lg:grid-cols-6 lg:gap-[1rem]">
                     {
-                        cards.map((card)=>(
-                            <Card key={card.id} {...card} mode={mode} onDeleteCard={onDeleteCard} onUpdateCard={onUpdateCard} />
-                        ))
+                        visibleCards.map((card)=>{
+                            const displayCard = {
+                                ...card,
+                                quantity :
+                                    pendingUpdates[card.id]?.quantity ?? card.quantity,
+                                isUpdated :
+                                    pendingUpdates[card.id] ? true : null,
+                                isDeleted :
+                                    pendingDeletes.includes(card.id) ? true : false,
+                            }
+                            return (
+                                <Card 
+                                    key={card.id} 
+                                    card={displayCard} 
+                                    mode={mode} 
+                                    onDeleteCard={onDeleteCard} 
+                                    onUpdateCard={onUpdateCard}
+                                />);
+                        })
                     }
                 </div>
             </div>

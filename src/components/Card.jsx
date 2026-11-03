@@ -1,25 +1,36 @@
 import {Link} from 'react-router-dom'
 
 
-export default function Card({id, card_id, title, language, image_path,quantity,mode,onDeleteCard,onUpdateCard}){
+export default function Card({card,mode,onDeleteCard,onUpdateCard}){
     const languageOptions = ['KO', 'JP', 'EN'];
+    const {id,card_id,title,quantity,language,image_path,isUpdated,isDeleted} = card;
+
+    //수정 예정인 카드를 표시
+    const borderStyle = isDeleted ? "border-red-400" :
+                            isUpdated ? " border-green-400" : "border-transparent";
+
+    const deleteDisplay = "opacity-25";
 
     return(
         <>
         <div className="relative">
             <Link to={`/cards/${card_id}`} key={id}>
-                <img
-                    src={image_path}
-                    alt={title}
-                    className="w-full"
-                />
+                <div id="changeStatus" 
+                    className = {`border border-4 rounded-xl ${borderStyle}`}
+                >
+                    <img
+                        src={image_path}
+                        alt={title}
+                        className={`w-full ${isDeleted ? deleteDisplay : ""}`}
+                    />
+                </div>
             </Link>
 
             {/*삭제 표시 */}
             {mode === "update" &&(
                 <div className="">
                     <button className="absolute top-2 left-2 bg-white text-red-500 border border-red-500 hover:bg-red-500 hover:text-white rounded-md" onClick={() => onDeleteCard(id)}>
-                        삭제
+                        {!isDeleted ? <span>삭제</span> : <span>삭제취소</span>}
                     </button>
                 </div>
 

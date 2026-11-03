@@ -66,27 +66,27 @@ export async function selectCards({cardId, cardIdList, name}){
 
 }
 
-export async function updateCard({id, quantity, language}){
-    const query = supabase.from('album')
-        .update({
-            quantity : quantity,
-            language : language,
-        })
-        .eq('id', id);
-
-    const {data,error} = await query;
+export async function saveAlbumChanges({pendingUpdates,pendingDeletes}){
+    Object.entries(pendingUpdates).map(
+        ([id,values])=>(console.log("albumPages / saveAlbumChanges : ",{id : Number(id), ...values,}))
+    );
+    const { error } = await supabase.rpc(
+        "save_album_changes"
+        ,{
+            p_updates : Object.entries(pendingUpdates).map(
+                ([id,values])=>({
+                    id : Number(id),
+                    ...values,
+                })
+            ),
+            p_deletes : pendingDeletes,
+        }
+    );
     if(error){
-        console.error(error);
+        console.error("앨범 저장 실패 : ",error);
+        return false;
     }
-    return data;
+
+    return true;
 }
-
-export async function deleteCard(id){
-    const query = supabase.from('album').delete().eq('id', id);
-    const {data,error} = await query;
-    if(error){
-        console.error(error);
-    }
-    return data;
-} 
 
