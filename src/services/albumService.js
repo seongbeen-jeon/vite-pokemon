@@ -3,7 +3,7 @@ import {supabase} from  '../lib/supabase';
 const IMG_BASE_URL = import.meta.env.VITE_IMG_BASE_URL;
 
 export async function getMyAlbum(){
-    const {data,error} = await supabase.from('album').select(`id, card_id, language, quantity, cards(title, image_path, pack_name, card_no, dex_no, rarity, card_type, set_code)`);
+    const {data,error} = await supabase.from('album').select(`id, card_id, language, quantity, grade, cards(title, image_path, pack_name, card_no, dex_no, rarity, card_type, set_code)`);
 
     const newPathData = data.map((card)=>({
                     ...card,

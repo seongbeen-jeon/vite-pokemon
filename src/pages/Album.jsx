@@ -20,6 +20,8 @@ function Album(){
     const [keyword, setKeyword] = useState("");
     const [searchedKeyword,setSearchedKeyword] = useState("");
 
+    const [isOpenFilterOption, setIsOpenFilterOption] = useState(false);
+
     const rarityGroup = {// 필터용
                 LOW : ["C", "U", "R", "RR","RRR", "temp"],
                 AR : ["AR","A","K"],
@@ -30,9 +32,22 @@ function Album(){
             }
     const rarityOption = ["LOW","AR","SR","SAR","UR","PROMO"];
     const [checkedRarity, setCheckedRarity] = useState(rarityOption); 
+
     const typeOption = ["pokemon", "non-pokemon"];
     const [checkedType, setCheckedType] = useState(typeOption);
-    
+
+    const languageOption = ["KOR", "JPN" , "ENG"];
+    const [checkedLanguage, setCheckedLanguage] = useState(languageOption);
+
+    const gradeGroup = {
+        "Single" : null,
+        "PSA10" : [10],
+        "PSA 9,8,7" : [9,8,7],
+        "PSA ~6" : [6,5,4,3,2,1],
+    };
+    const gradeOption = ["Single", "PSA10", "PSA 9,8,7", "PSA ~6"];
+    const [checkedGrade, setCheckedGrade] = useState(gradeOption);
+
     const [sortOption, setSortOption] = useState("title");
 
     const [pendingUpdates, setPendingUpdates] = useState({});
@@ -91,6 +106,32 @@ function Album(){
         );
     }
 
+    const handleCheckLanguage = (e)=>{
+        const targetLanguage = e.target.value;
+        
+        setCheckedLanguage(
+            (prev)=>{
+                if(prev.includes(targetLanguage)){
+                    return prev.filter((language)=> language !== targetLanguage );
+                }
+                return [...prev, targetLanguage];
+            }
+        );
+    }
+
+    const handleCheckGrade = (e)=>{
+        const targetGrade = e.target.value;
+
+        setCheckedGrade(
+            (prev)=>{
+                if(prev.includes(targetGrade)){
+                    return prev.filter((grade)=> grade !== targetGrade);
+                }
+                return [...prev, targetGrade];
+            }
+        );
+    }
+
     {/* 검색, 필터, 정렬 통합 */}
     const visibleCards = useMemo(()=>{
         
@@ -120,9 +161,12 @@ function Album(){
             const matchedType = checkedType.includes(card.cards.card_type);
             const matchedRarity = checkedRarity.some((rarity)=>
                 rarityGroup[rarity]?.includes(card.cards.rarity)
-            )
-            
-            return matchedType && matchedRarity ;
+            );
+            const matchedLanguage = checkedLanguage.includes(card.language);
+            const matchedGrade = checkedGrade.some((grade)=>
+                gradeGroup[grade]?.includes(card.grade) || (grade ==="Single" && card.grade === null)
+            );
+            return matchedType && matchedRarity && matchedLanguage && matchedGrade;
         });
         
         {/* 정렬 */}
@@ -141,6 +185,8 @@ function Album(){
         searchedKeyword,
         checkedRarity,
         checkedType,
+        checkedLanguage,
+        checkedGrade,
         sortOption,
     ]);
     
@@ -163,26 +209,27 @@ function Album(){
     };
 
     {/* 수정모드 - 변경 */}
-    const onUpdateCard = ({id, quantity, language})=>{
+    const onUpdateCard = ({id, quantity, language, grade})=>{
         setPendingUpdates(prev=>({
             ...prev,
-            [id] : {"quantity" : quantity, "language" : language}
+            [id] : {"quantity" : quantity, "language" : language, "grade" : grade}
         }));
     };
 
     const handleUpdatesSubmit = async ()=>{
         const success = await saveAlbumChanges({pendingDeletes, pendingUpdates});
 
-        if(!success){
-            alert("수정에 실패했습니다");
-            return ;
-        }
-
         const refreshed = await fetchMyAlbum();
 
         if(refreshed){
             setPendingDeletes([]);
             setPendingUpdates({});
+
+            if(!success){
+                alert("수정에 실패했습니다");
+                return ;
+            }
+
             alert("수정 완료!");
         }else{
             alert("수정은 완료 되었으나, 앨범 데이터를 새로 불러오지 못했습니다. 새로고침을 해주세요");
@@ -220,6 +267,7 @@ function Album(){
         <>
         <div id="body" className="w-full">
 
+            {/* 수정모드 진입 버튼 */}
             <div id="modeChange" className="flex justify-end items-center" >
                 <div id="updateMode" 
                     className="w-25 mr-10 mt-5 p-1.5 
@@ -234,47 +282,162 @@ function Album(){
                 </div>
             </div>
             
+            {/* 검색 바 */}
             <div id="searchBar" className="w-[70%] mx-auto my-10">
                 <SearchBar value={keyword} onChange={onChange} onSearch={onSearch}/>
             </div>
-           
 
-            <div id="option_bar" className="m-[1rem] mt-[2rem] flex justify-between items-center">
-                <div id="sort" className="">
-                    <select className="w-[8rem] bg-white shadow-md p-[0.5rem]" onChange={onSort}>
-                        <option >정렬</option>
-                        <option value="dex_number" >도감번호</option>
-                        <option value="title" >이름</option>
-                    </select>
-                </div>
-                <div id="filter" className="flex flex-col items-start">
-                    <fieldset>
-                        {typeOption.map((type)=>(
-                            <label key={type} className="mr-[1rem]">
-                                <input type="checkbox" className="pr-1" 
-                                    value={type} 
-                                    checked={checkedType.includes(type)}
-                                    onChange={handleCheckType}
-                                />
-                                {type==="pokemon" ? "포켓몬" : "기타"}
-                            </label>
-                        ))}
-                    </fieldset>
-
-                    <fieldset className="mt-4">
-                        {rarityOption.map((rarity)=>(
-                            <label key={rarity} className="mr-4">
-                                <input type="checkbox" className="pr-1" 
-                                    value={rarity} 
-                                    checked={checkedRarity.includes(rarity)}
-                                    onChange={handleCheckRarity}
-                                />
-                                {rarity}
-                            </label>
-                        ))}
-                    </fieldset>
-                </div>
+        <div id="Option" className="m-[1rem] mt-[2rem] flex justify-between items-center">
+            {/* 정렬 */}
+           <div id="sort" className="">
+                <select className="w-[8rem] bg-white shadow-md p-[0.5rem]" onChange={onSort}>
+                    <option >정렬</option>
+                    <option value="dex_number" >도감번호</option>
+                    <option value="title" >이름</option>
+                </select>
             </div>
+
+            {/* 필터 */}
+            <div id="filter" className="w-[30rem] bg-white/80 backdrop-blur-md border border-slate-200/80 rounded-2xl p-5 shadow-sm space-y-4 mb-6">
+                {/* 헤더 타이틀 */}
+                <div className="flex items-center justify-between gap-[1rem] pb-3 border-b border-slate-100 text-sm font-semibold text-slate-700">
+                    <div className="flex items-center gap-2">
+                        <svg className="w-4 h-4 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"/>
+                        </svg>
+                        <span>필터 옵션</span>
+                    </div>
+                    
+                    {/* 2. 토글 버튼 클릭 시 상태 반전 */}
+                    <button 
+                        onClick={() => setIsOpenFilterOption(!isOpenFilterOption)}
+                        className="flex items-center gap-1 text-xs font-medium text-slate-500 hover:text-slate-800 transition-colors bg-slate-100 px-2.5 py-1 rounded-lg"
+                    >
+                        <span>{isOpenFilterOption ? "접기" : "펼치기"}</span>
+                        {/* 3. 상태에 따라 화살표 방향 회전 */}
+                        <svg 
+                            className={`w-3.5 h-3.5 transition-transform duration-200 ${isOpenFilterOption ? "rotate-180" : ""}`} 
+                            fill="none" 
+                            stroke="currentColor" 
+                            viewBox="0 0 24 24"
+                        >
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"/>
+                        </svg>
+                    </button>
+                </div>
+                {/* 필터 창 On */}
+                {isOpenFilterOption &&(
+                    <div className="space-y-3 text-sm w-min-[10rem]">
+                    {/* 1. 분류 필터 */}
+                    <div className="flex flex-wrap items-center gap-2">
+                        <span className="text-xs font-medium text-slate-400 w-16">분류</span>
+                        <fieldset className="flex flex-wrap gap-1.5">
+                            {typeOption.map((type) => {
+                                const isChecked = checkedType.includes(type);
+                                return (
+                                    <label 
+                                        key={type} 
+                                        className={`cursor-pointer inline-flex items-center px-3 py-1.5 rounded-xl text-xs font-medium transition-all border ${
+                                            isChecked 
+                                                ? "bg-indigo-200 text-indigo-700 border-indigo-200 shadow-2xs" 
+                                                : "bg-slate-50 text-slate-500 border-slate-200 hover:bg-slate-100"
+                                        }`}
+                                    >
+                                        <input type="checkbox" className="sr-only" 
+                                            value={type} 
+                                            checked={isChecked}
+                                            onChange={handleCheckType}
+                                        />
+                                        {type}
+                                    </label>
+                                );
+                            })}
+                        </fieldset>
+                    </div>
+
+                    {/* 2. 등급 필터 */}
+                    <div className="flex flex-wrap items-center gap-2">
+                        <span className="text-xs font-medium text-slate-400 w-16">등급</span>
+                        <fieldset className="flex flex-wrap gap-1.5">
+                            {rarityOption.map((rarity) => {
+                                const isChecked = checkedRarity.includes(rarity);
+                                return (
+                                    <label 
+                                        key={rarity} 
+                                        className={`cursor-pointer inline-flex items-center px-3 py-1.5 rounded-xl text-xs font-medium transition-all border ${
+                                            isChecked 
+                                                ? "bg-indigo-200 text-indigo-700 border-indigo-200 shadow-2xs" 
+                                                : "bg-slate-50 text-slate-500 border-slate-200 hover:bg-slate-100"
+                                        }`}
+                                    >
+                                        <input type="checkbox" className="sr-only" 
+                                            value={rarity} 
+                                            checked={isChecked}
+                                            onChange={handleCheckRarity}
+                                        />
+                                        {rarity}
+                                    </label>
+                                );
+                            })}
+                        </fieldset>
+                    </div>
+
+                    {/* 3. 언어 필터 */}
+                    <div className="flex flex-wrap items-center gap-2">
+                        <span className="text-xs font-medium text-slate-400 w-16">언어</span>
+                        <fieldset className="flex flex-wrap gap-1.5">
+                            {languageOption.map((language) => {
+                                const isChecked = checkedLanguage.includes(language);
+                                return (
+                                    <label 
+                                        key={language} 
+                                        className={`cursor-pointer inline-flex items-center px-3 py-1.5 rounded-xl text-xs font-medium transition-all border ${
+                                            isChecked 
+                                                ? "bg-indigo-200 text-indigo-700 border-indigo-200 shadow-2xs" 
+                                                : "bg-slate-50 text-slate-500 border-slate-200 hover:bg-slate-100"
+                                        }`}
+                                    >
+                                        <input type="checkbox" className="sr-only" 
+                                            value={language} 
+                                            checked={isChecked}
+                                            onChange={handleCheckLanguage}
+                                        />
+                                        {language}
+                                    </label>
+                                );
+                            })}
+                        </fieldset>
+                    </div>
+                    
+                    {/* 등급 필터 */}
+                    <div className="flex flex-wrap items-center gap-2">
+                        <span className="text-xs font-medium text-slate-400 w-16">분류</span>
+                        <fieldset className="flex flex-wrap gap-1.5">
+                            {gradeOption.map((grade) => {
+                                const isChecked = checkedGrade.includes(grade);
+                                return (
+                                    <label 
+                                        key={grade} 
+                                        className={`cursor-pointer inline-flex items-center px-3 py-1.5 rounded-xl text-xs font-medium transition-all border ${
+                                            isChecked 
+                                                ? "bg-indigo-200 text-indigo-700 border-indigo-200 shadow-2xs" 
+                                                : "bg-slate-50 text-slate-500 border-slate-200 hover:bg-slate-100"
+                                        }`}
+                                    >
+                                        <input type="checkbox" className="sr-only" 
+                                            value={grade} 
+                                            checked={isChecked}
+                                            onChange={handleCheckGrade}
+                                        />
+                                        {grade}
+                                    </label>
+                                );
+                            })}
+                        </fieldset>
+                    </div>
+                </div>)}
+            </div>
+        </div>
 
 
             <div id="container" className="mx-auto m-[2rem]">
@@ -285,10 +448,14 @@ function Album(){
                                 ...card,
                                 quantity :
                                     pendingUpdates[card.id]?.quantity ?? card.quantity,
+                                language :
+                                    pendingUpdates[card.id]?.language ?? card.language,
                                 isUpdated :
                                     pendingUpdates[card.id] ? true : false,
                                 isDeleted :
                                     pendingDeletes.includes(card.id) ? true : false,
+                                grade :
+                                    pendingUpdates[card.id]?.grade ?? card.grade,
                             }
                             return (
                                 <Card 

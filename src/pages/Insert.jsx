@@ -56,7 +56,7 @@ export default function Insert(){
         if(pendingCards.some((c) => c.id === card.id)) { //동일 카드가 이미 등록되어 있을 때
             alert("이미 등록할 카드 목록에 존재합니다.");
         } else {
-            setPendingCards((prev) => [...prev, {...card, quantity: 1, language : "KO"}]);
+            setPendingCards((prev) => [...prev, {...card, quantity: 1, language : "KOR"}]);
             setSearchResults([]);//검색 결과 초기화
         }
     };
